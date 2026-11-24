@@ -1,0 +1,341 @@
+---
+// Página temporal para elegir el hero. No está enlazada ni se indexa.
+import Base from '../layouts/Base.astro';
+
+const palabrasRotativas = ['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.'];
+const chips = [
+  { tipo: 'boton', antes: 'Submit', despues: 'Crear mi cuenta →', x: 8, y: 14, prof: 0.6 },
+  { tipo: 'error', antes: 'Error 422: invalid input', despues: 'Revisa el formato del correo', x: 68, y: 8, prof: 1 },
+  { tipo: 'exito', antes: 'Operation successful', despues: '✓ Guardamos tus cambios', x: 74, y: 74, prof: 0.8 },
+  { tipo: 'tooltip', antes: 'Click here for more info', despues: '¿Para qué pedimos esto?', x: 4, y: 78, prof: 1.2 },
+  { tipo: 'vacio', antes: 'No data', despues: 'Aún no tienes casos. Crea el primero', x: 40, y: 88, prof: 0.5 },
+];
+const titularTono = 'Diseño las palabras que hacen que un producto se entienda.';
+---
+
+<Base titulo="Propuestas de hero" noindex>
+  <section class="contenedor intro">
+    <p class="eyebrow">Exploración · Hero de la portada</p>
+    <h1>Cuatro propuestas para <em>elegir</em></h1>
+    <p class="intro__texto">Cada una parte de la misma idea de la referencia —un titular que reacciona—, pero la convierte en una metáfora del trabajo de un UX Writer. Pruébalas con el cursor; en el móvil se animan solas.</p>
+  </section>
+
+  <!-- 01 · Reescritura en vivo -->
+  <section class="propuesta" id="p1">
+    <div class="contenedor">
+      <header class="cab">
+        <span class="cab__num">01</span>
+        <div>
+          <h2>Reescritura en vivo</h2>
+          <p><strong>Concepto:</strong> el titular empieza con jerga corporativa y se edita delante del visitante hasta quedar claro. Muestra el oficio en tres segundos: detectar la fricción y reescribir.</p>
+        </div>
+      </header>
+      <div class="lienzo lienzo--editor">
+        <p class="editor__barra" aria-hidden="true"><span></span><span></span><span></span><em>titular-portada.txt</em></p>
+        <p class="editor__texto" aria-live="off"><span class="editor__escrito"></span><em class="editor__acento"></em><span class="editor__caret"></span></p>
+        <p class="editor__nota" aria-hidden="true">Jerga → claridad</p>
+        <button class="editor__repetir" type="button">↺ Repetir</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Lente de claridad -->
+  <section class="propuesta" id="p2">
+    <div class="contenedor">
+      <header class="cab">
+        <span class="cab__num">02</span>
+        <div>
+          <h2>Lente de claridad</h2>
+          <p><strong>Concepto:</strong> el titular está desenfocado y el cursor funciona como una lente que lo vuelve nítido. Es la metáfora directa del valor que aportas: donde llega tu trabajo, el mensaje se entiende.</p>
+        </div>
+      </header>
+      <div class="lienzo lente" data-lente>
+        <p class="lente__capa lente__capa--borrosa" aria-hidden="true"><span class="lente__texto">Diseño las palabras que hacen que un producto <em>se entienda.</em></span></p>
+        <p class="lente__capa lente__capa--nitida"><span class="lente__texto">Diseño las palabras que hacen que un producto <em>se entienda.</em></span></p>
+        <span class="lente__aro" aria-hidden="true"><span>claridad</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Microcopy vivo -->
+  <section class="propuesta" id="p3">
+    <div class="contenedor">
+      <header class="cab">
+        <span class="cab__num">03</span>
+        <div>
+          <h2>Microcopy vivo</h2>
+          <p><strong>Concepto:</strong> la promesa rota entre los objetivos que cumples (entender, confiar, convertir) y alrededor flotan piezas reales de interfaz. Al pasar el cursor por cada una ves el «antes» genérico frente a tu «después».</p>
+        </div>
+      </header>
+      <div class="lienzo micro" data-micro>
+        {chips.map((c) => (
+          <button type="button" class={`chip chip--${c.tipo}`} style={`--x:${c.x}%;--y:${c.y}%;--prof:${c.prof}`} data-chip>
+            <span class="chip__despues">{c.despues}</span>
+            <span class="chip__antes"><s>{c.antes}</s></span>
+          </button>
+        ))}
+        <p class="micro__titular">
+          Diseño las palabras que hacen que un producto
+          <span class="rota" data-rota>
+            {palabrasRotativas.map((p, i) => <em class={i === 0 ? 'activa' : ''}>{p}</em>)}
+          </span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Voz y tono -->
+  <section class="propuesta" id="p4">
+    <div class="contenedor">
+      <header class="cab">
+        <span class="cab__num">04</span>
+        <div>
+          <h2>Voz y tono</h2>
+          <p><strong>Concepto:</strong> cada letra cambia de peso según la cercanía del cursor: el mismo mensaje dicho con más o menos intensidad. Traduce a tipografía la idea de modular el tono sin cambiar la voz.</p>
+        </div>
+      </header>
+      <div class="lienzo tono" data-tono>
+        <p class="tono__titular" aria-label={titularTono}>
+          {titularTono.split(' ').map((palabra, i, arr) => (
+            <span class={`tono__palabra${i >= arr.length - 2 ? ' tono__palabra--acento' : ''}`} aria-hidden="true">
+              {[...palabra].map((l) => <span class="tono__letra">{l}</span>)}
+            </span>
+          ))}
+        </p>
+        <div class="tono__escala" aria-hidden="true"><span>Neutro</span><span>Enfático</span></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tactil = matchMedia('(hover: none)').matches;
+
+  /* ---------- 01 · Reescritura en vivo ---------- */
+  {
+    const escrito = document.querySelector<HTMLElement>('.editor__escrito')!;
+    const acento = document.querySelector<HTMLElement>('.editor__acento')!;
+    const nota = document.querySelector<HTMLElement>('.editor__nota')!;
+    const lienzo = document.querySelector<HTMLElement>('.lienzo--editor')!;
+    const jerga = 'Implementamos soluciones de interacción orientadas a optimizar la experiencia.';
+    const base = 'Diseño las palabras que hacen que un producto ';
+    const final = 'se entienda.';
+    const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    let turno = 0;
+
+    const escribir = async (el: HTMLElement, texto: string, vel: number, id: number) => {
+      for (const c of texto) { if (id !== turno) return; el.textContent += c; await espera(vel + Math.random() * vel * 0.6); }
+    };
+    const correr = async () => {
+      const id = ++turno;
+      escrito.textContent = ''; acento.textContent = '';
+      lienzo.classList.remove('seleccion', 'listo'); nota.classList.remove('visible');
+      if (reducir) { escrito.textContent = base; acento.textContent = final; lienzo.classList.add('listo'); return; }
+      await espera(400);
+      await escribir(escrito, jerga, 28, id); if (id !== turno) return;
+      await espera(700);
+      lienzo.classList.add('seleccion'); nota.classList.add('visible');
+      await espera(1100); if (id !== turno) return;
+      lienzo.classList.remove('seleccion'); escrito.textContent = '';
+      await espera(350);
+      await escribir(escrito, base, 45, id); if (id !== turno) return;
+      await escribir(acento, final, 70, id); if (id !== turno) return;
+      lienzo.classList.add('listo');
+    };
+    document.querySelector('.editor__repetir')!.addEventListener('click', correr);
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { correr(); o.disconnect(); } }, { threshold: 0.5 }).observe(lienzo);
+  }
+
+  /* ---------- 02 · Lente de claridad ---------- */
+  {
+    const lente = document.querySelector<HTMLElement>('[data-lente]')!;
+    let objX = 0.3, objY = 0.5, x = 0.3, y = 0.5, dentro = false, t = 0;
+    lente.addEventListener('pointermove', (e) => {
+      const r = lente.getBoundingClientRect();
+      objX = (e.clientX - r.left) / r.width; objY = (e.clientY - r.top) / r.height; dentro = true;
+    });
+    lente.addEventListener('pointerleave', () => { dentro = false; });
+    const bucle = () => {
+      t += 0.006;
+      // Sin cursor, la lente recorre el titular sola.
+      if (!dentro || tactil) { objX = 0.5 + Math.sin(t * 1.3) * 0.38; objY = 0.5 + Math.sin(t * 2.1) * 0.22; }
+      x += (objX - x) * 0.12; y += (objY - y) * 0.12;
+      lente.style.setProperty('--lx', `${x * 100}%`); lente.style.setProperty('--ly', `${y * 100}%`);
+      requestAnimationFrame(bucle);
+    };
+    if (reducir) lente.classList.add('lente--estatica'); else bucle();
+  }
+
+  /* ---------- 03 · Microcopy vivo ---------- */
+  {
+    const micro = document.querySelector<HTMLElement>('[data-micro]')!;
+    const rota = micro.querySelector<HTMLElement>('[data-rota]')!;
+    const opciones = [...rota.querySelectorAll('em')];
+    let i = 0;
+    const ajustarAncho = () => { rota.style.width = `${opciones[i].offsetWidth}px`; };
+    ajustarAncho();
+    addEventListener('resize', ajustarAncho);
+    if (!reducir) setInterval(() => {
+      opciones[i].classList.replace('activa', 'sale');
+      const anterior = opciones[i];
+      setTimeout(() => anterior.classList.remove('sale'), 700);
+      i = (i + 1) % opciones.length;
+      opciones[i].classList.add('activa');
+      ajustarAncho();
+    }, 2400);
+
+    micro.addEventListener('pointermove', (e) => {
+      if (reducir) return;
+      const r = micro.getBoundingClientRect();
+      micro.style.setProperty('--mx', String((e.clientX - r.left) / r.width - 0.5));
+      micro.style.setProperty('--my', String((e.clientY - r.top) / r.height - 0.5));
+    });
+    // En pantallas táctiles, las piezas alternan solas entre el «antes» y el «después».
+    const chipsEl = [...micro.querySelectorAll<HTMLElement>('[data-chip]')];
+    chipsEl.forEach((c) => c.addEventListener('click', () => c.classList.toggle('chip--antes')));
+    if (tactil && !reducir) {
+      let k = 0;
+      setInterval(() => { chipsEl.forEach((c) => c.classList.remove('chip--antes')); chipsEl[k % chipsEl.length].classList.add('chip--antes'); k++; }, 1800);
+    }
+  }
+
+  /* ---------- 04 · Voz y tono ---------- */
+  {
+    const tono = document.querySelector<HTMLElement>('[data-tono]')!;
+    const letras = [...tono.querySelectorAll<HTMLElement>('.tono__letra')];
+    let cx = -9999, cy = -9999, dentro = false, t = 0;
+    let centros: { x: number; y: number }[] = [];
+    const medir = () => {
+      const r = tono.getBoundingClientRect();
+      centros = letras.map((l) => { const b = l.getBoundingClientRect(); return { x: b.left - r.left + b.width / 2, y: b.top - r.top + b.height / 2 }; });
+    };
+    tono.addEventListener('pointermove', (e) => { const r = tono.getBoundingClientRect(); cx = e.clientX - r.left; cy = e.clientY - r.top; dentro = true; });
+    tono.addEventListener('pointerleave', () => { dentro = false; });
+    const pesos = letras.map(() => 300);
+    const bucle = () => {
+      t += 0.02;
+      const r = tono.getBoundingClientRect();
+      const radio = Math.max(140, r.width * 0.16);
+      letras.forEach((l, i) => {
+        const c = centros[i]; if (!c) return;
+        let objetivo: number;
+        if (dentro && !tactil) {
+          const d = Math.hypot(c.x - cx, c.y - cy);
+          objetivo = 250 + Math.max(0, 1 - d / radio) * 650;
+        } else {
+          // Sin cursor, una onda recorre el titular de izquierda a derecha.
+          const fase = (c.x / r.width) * 6 - t * 2;
+          objetivo = 300 + (Math.sin(fase) * 0.5 + 0.5) ** 3 * 600;
+        }
+        pesos[i] += (objetivo - pesos[i]) * 0.15;
+        l.style.fontVariationSettings = `'wght' ${pesos[i].toFixed(0)}`;
+      });
+      requestAnimationFrame(bucle);
+    };
+    document.fonts.ready.then(() => { medir(); new ResizeObserver(medir).observe(tono); if (!reducir) bucle(); });
+  }
+</script>
+
+<style>
+  .intro { padding-block: clamp(3rem, 8vw, 6rem) 2rem; }
+  .intro h1 { font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: -0.045em; }
+  .intro h1 em { color: var(--acento); }
+  .intro__texto { max-width: 52ch; color: var(--texto-suave); font-size: 1.125rem; margin: 1.5rem 0 0; }
+
+  .propuesta { padding-top: clamp(4rem, 10vw, 7rem); }
+  .cab { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; margin-bottom: 1.5rem; max-width: 52rem; }
+  .cab__num { font-family: var(--display); font-weight: 600; font-size: 1rem; color: var(--acento-texto); padding-top: 0.35rem; }
+  .cab h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.035em; }
+  .cab p { margin: 0.6rem 0 0; color: var(--texto-suave); }
+  .cab strong { color: var(--texto); font-weight: 600; }
+
+  .lienzo {
+    position: relative; overflow: hidden;
+    min-height: clamp(26rem, 62vh, 38rem);
+    border-radius: var(--radio); background: var(--superficie);
+    padding: clamp(1.5rem, 5vw, 4rem);
+    display: flex; align-items: center;
+  }
+  .lienzo :is(p) { margin: 0; }
+  .titular, .editor__texto, .lente__capa, .micro__titular, .tono__titular {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(2.25rem, 6.6vw, 6rem); line-height: 1; letter-spacing: -0.045em;
+  }
+  em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--acento); }
+
+  /* 01 */
+  .lienzo--editor { flex-direction: column; align-items: stretch; justify-content: center; }
+  .editor__barra { position: absolute; top: 1rem; left: 1.25rem; right: 1.25rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; }
+  .editor__barra span { width: 10px; height: 10px; border-radius: 50%; background: var(--borde); }
+  .editor__barra em { font-family: var(--sans); font-style: normal; color: var(--texto-suave); margin-left: 0.6rem; font-size: 0.8125rem; }
+  .editor__texto { max-width: 18ch; min-height: 3em; }
+  .editor__escrito { transition: background-color 0.3s, color 0.3s; border-radius: 6px; }
+  .seleccion .editor__escrito { background: color-mix(in srgb, var(--acento) 22%, transparent); text-decoration: line-through; text-decoration-color: var(--acento); text-decoration-thickness: 0.06em; color: var(--texto-suave); }
+  .editor__caret { display: inline-block; width: 0.06em; height: 0.85em; margin-left: 0.04em; background: var(--acento); vertical-align: -0.05em; animation: parpadeo 1s steps(1) infinite; }
+  .listo .editor__caret { animation-duration: 1.2s; }
+  @keyframes parpadeo { 50% { opacity: 0; } }
+  .editor__nota { position: absolute; right: clamp(1rem, 4vw, 3rem); top: clamp(3.5rem, 8vw, 5rem); font-size: 0.875rem; font-weight: 500; padding: 0.45rem 0.85rem; border-radius: 999px; background: var(--texto); color: var(--fondo); opacity: 0; transform: translateY(8px) scale(0.95); transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); }
+  .editor__nota.visible { opacity: 1; transform: none; }
+  .editor__repetir { position: absolute; right: 1.25rem; bottom: 1.25rem; font: inherit; font-size: 0.875rem; padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto); cursor: pointer; }
+  .editor__repetir:hover { border-color: var(--texto); }
+
+  /* 02 */
+  .lente { --lx: 30%; --ly: 50%; cursor: none; }
+  .lente__capa { position: absolute; inset: 0; padding: clamp(1.5rem, 5vw, 4rem); display: flex; align-items: center; }
+  .lente__texto { display: block; max-width: 18ch; }
+  .lente__capa--borrosa { filter: blur(clamp(6px, 1vw, 12px)); opacity: 0.55; user-select: none; }
+  .lente__capa--nitida {
+    -webkit-mask-image: radial-gradient(circle clamp(90px, 14vw, 190px) at var(--lx) var(--ly), #000 60%, transparent 100%);
+    mask-image: radial-gradient(circle clamp(90px, 14vw, 190px) at var(--lx) var(--ly), #000 60%, transparent 100%);
+  }
+  .lente__aro {
+    position: absolute; left: var(--lx); top: var(--ly); width: clamp(180px, 28vw, 380px); aspect-ratio: 1;
+    border-radius: 50%; border: 1px solid color-mix(in srgb, var(--acento) 55%, transparent);
+    transform: translate(-50%, -50%); pointer-events: none;
+  }
+  .lente__aro span { position: absolute; left: 50%; bottom: -0.9rem; transform: translateX(-50%); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acento-texto); background: var(--superficie); padding: 0 0.5rem; }
+  .lente--estatica .lente__capa--borrosa, .lente--estatica .lente__aro { display: none; }
+  .lente--estatica .lente__capa--nitida { mask-image: none; -webkit-mask-image: none; }
+
+  /* 03 */
+  .micro { --mx: 0; --my: 0; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
+  .micro__titular { position: relative; z-index: 1; max-width: 16ch; }
+  .rota { position: relative; display: inline-block; height: 1.1em; vertical-align: bottom; overflow: hidden; transition: width 0.6s var(--ease); text-align: left; }
+  .rota em { position: absolute; left: 0; top: 0; white-space: nowrap; transform: translateY(110%); opacity: 0; transition: transform 0.7s var(--ease), opacity 0.5s; }
+  .rota em.activa { transform: none; opacity: 1; position: relative; }
+  .rota em.sale { transform: translateY(-110%); opacity: 0; }
+  .chip {
+    position: absolute; left: var(--x); top: var(--y); z-index: 2;
+    font: inherit; font-size: clamp(0.75rem, 1.4vw, 0.9375rem); font-weight: 500; white-space: nowrap;
+    padding: 0.6rem 1rem; border-radius: 12px; border: 1px solid var(--borde);
+    background: var(--tarjeta); color: var(--texto); cursor: default;
+    box-shadow: 0 18px 40px -22px rgb(0 0 0 / 0.35);
+    translate: calc(var(--mx) * var(--prof) * -40px) calc(var(--my) * var(--prof) * -40px);
+    transition: translate 0.6s var(--ease), transform 0.4s var(--ease);
+    animation: flotar 6s ease-in-out infinite; animation-delay: calc(var(--prof) * -3s);
+    display: grid;
+  }
+  .chip:hover { animation-play-state: paused; z-index: 3; }
+  .chip > span { grid-area: 1 / 1; transition: opacity 0.3s, transform 0.4s var(--ease); }
+  .chip__antes { opacity: 0; transform: translateY(6px); color: var(--texto-suave); }
+  .chip:hover .chip__antes, .chip--antes .chip__antes { opacity: 1; transform: none; }
+  .chip:hover .chip__despues, .chip--antes .chip__despues { opacity: 0; transform: translateY(-6px); }
+  .chip--boton { background: var(--texto); color: var(--fondo); border-color: transparent; border-radius: 999px; }
+  .chip--error { border-color: color-mix(in srgb, #e5484d 55%, transparent); color: #d1343a; }
+  .chip--exito { color: #18794e; border-color: color-mix(in srgb, #30a46c 45%, transparent); }
+  :root[data-theme='dark'] .chip--error { color: #ff8b8f; } :root[data-theme='dark'] .chip--exito { color: #4cc38a; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .chip--error { color: #ff8b8f; } :root:not([data-theme='light']) .chip--exito { color: #4cc38a; } }
+  @keyframes flotar { 50% { transform: translateY(-8px); } }
+  @media (max-width: 40rem) { .chip--vacio, .chip--tooltip { display: none; } .chip { padding: 0.45rem 0.75rem; } }
+
+  /* 04 */
+  .tono { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2.5rem; }
+  .tono__titular { font-weight: 300; max-width: 17ch; }
+  .tono__palabra { display: inline-block; white-space: nowrap; margin-right: 0.25em; }
+  .tono__palabra--acento { color: var(--acento); }
+  .tono__letra { display: inline-block; font-variation-settings: 'wght' 300; }
+  .tono__escala { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; color: var(--texto-suave); }
+  .tono__escala::before { content: ''; order: 1; width: 8rem; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--borde), var(--acento)); }
+  .tono__escala span:last-child { order: 2; }
+</style>

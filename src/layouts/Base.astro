@@ -6,11 +6,13 @@ interface Props {
   titulo?: string;
   descripcion?: string;
   progreso?: boolean;
+  noindex?: boolean;
 }
 const {
   titulo,
   descripcion = `${perfil.nombre} — ${perfil.rol}. Casos de estudio de UX Writing y Content Design.`,
   progreso = false,
+  noindex = false,
 } = Astro.props;
 const tituloCompleto = titulo ? `${titulo} · ${perfil.nombre}` : `${perfil.nombre} · ${perfil.rol}`;
 const ruta = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
@@ -29,6 +31,7 @@ const anio = new Date().getFullYear();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{tituloCompleto}</title>
     <meta name="description" content={descripcion} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={descripcion} />
     <meta property="og:type" content="website" />

@@ -88,7 +88,9 @@ const anio = new Date().getFullYear();
     </footer>
 
     <script>
-      // Revelado progresivo al hacer scroll.
+      // Revelado progresivo al hacer scroll. Los bloques del Markdown se marcan aquí,
+      // antes de observar, para que ninguno quede oculto.
+      document.querySelectorAll('#prosa > *').forEach((el) => el.setAttribute('data-reveal', ''));
       const io = new IntersectionObserver(
         (entradas) => entradas.forEach((e) => {
           if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }

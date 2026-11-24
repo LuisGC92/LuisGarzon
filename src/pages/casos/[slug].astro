@@ -93,9 +93,6 @@ const ficha = [
 </Base>
 
 <script>
-  // Marca los bloques del Markdown para revelarlos al hacer scroll.
-  document.querySelectorAll('#prosa > *').forEach((el) => el.setAttribute('data-reveal', ''));
-
   // Contador animado para las métricas numéricas.
   const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const io = new IntersectionObserver((entradas) => {

@@ -1,0 +1,109 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TarjetaCaso from '../components/TarjetaCaso.astro';
+import { url } from '../config';
+
+const casos = (await getCollection('casos', ({ data }) => !data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
+
+const disciplinas = ['UX Writing', 'Content Design', 'Microcopy', 'Voz y tono', 'Arquitectura de la información', 'Copywriting', 'Investigación de contenido'];
+
+const enfoque = [
+  { titulo: 'Claridad antes que ingenio', texto: 'Cada texto existe para que alguien complete una tarea. Si hay que elegir entre sonar bien y entenderse, gana entenderse.' },
+  { titulo: 'Decisiones con racional', texto: 'Las palabras se justifican con investigación, heurísticas y objetivos de negocio, no con gustos personales.' },
+  { titulo: 'Contenido que escala', texto: 'Diseño patrones, glosarios y reglas de voz para que el producto hable igual en cada pantalla.' },
+];
+---
+
+<Base>
+  <section class="hero contenedor">
+    <p class="eyebrow hero__eyebrow">UX Writer & Content Designer</p>
+    <h1 class="hero__titulo">
+      <span class="linea"><span>Diseño las palabras</span></span>
+      <span class="linea"><span>que hacen que un</span></span>
+      <span class="linea"><span>producto <em>se entienda.</em></span></span>
+    </h1>
+    <div class="hero__pie">
+      <p>Publicista de formación. Escribo y estructuro contenido de interfaz que reduce la fricción, genera confianza y mueve métricas.</p>
+      <div class="hero__acciones">
+        <a class="boton" href="#casos">Ver casos <span class="flecha">↓</span></a>
+        <a class="boton boton--borde" href={url('/sobre-mi')}>Sobre mí</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="cinta" aria-hidden="true">
+    <div class="cinta__pista">
+      {[0, 1].map(() => (
+        <ul>{disciplinas.map((d) => <li>{d}<span>✦</span></li>)}</ul>
+      ))}
+    </div>
+  </div>
+
+  <section id="casos" class="contenedor seccion">
+    <div class="seccion__cabeza" data-reveal>
+      <p class="eyebrow">Casos de estudio</p>
+      <h2>Trabajo <em>seleccionado</em></h2>
+    </div>
+    <div class="casos">
+      {casos.map((caso, i) => <TarjetaCaso caso={caso} indice={i} />)}
+    </div>
+  </section>
+
+  <section class="contenedor seccion">
+    <div class="seccion__cabeza" data-reveal>
+      <p class="eyebrow">Enfoque</p>
+      <h2>Cómo <em>trabajo</em></h2>
+    </div>
+    <ol class="enfoque">
+      {enfoque.map((e, i) => (
+        <li data-reveal style={`--delay:${i * 0.1}s`}>
+          <span class="enfoque__num">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{e.titulo}</h3>
+          <p>{e.texto}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .hero { padding-block: clamp(4rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem); }
+  .hero__eyebrow { animation: aparecer 1s var(--ease) both; }
+  .hero__titulo { font-size: clamp(2.75rem, 9.5vw, 8.25rem); letter-spacing: -0.05em; line-height: 0.98; }
+  .linea { display: block; overflow: hidden; padding-bottom: 0.08em; }
+  .linea > span { display: inline-block; animation: subir 1.1s var(--ease) both; }
+  .linea:nth-child(2) > span { animation-delay: 0.08s; }
+  .linea:nth-child(3) > span { animation-delay: 0.16s; }
+  .hero__titulo em { color: var(--acento); padding-right: 0.05em; }
+  .hero__pie {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;
+    gap: 2rem; margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    animation: aparecer 1s 0.45s var(--ease) both;
+  }
+  .hero__pie p { max-width: 34ch; margin: 0; color: var(--texto-suave); font-size: 1.125rem; }
+  .hero__acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  @keyframes subir { from { transform: translateY(105%); } to { transform: none; } }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  .cinta { overflow: hidden; border-block: 1px solid var(--borde); padding-block: 1.1rem; }
+  .cinta__pista { display: flex; width: max-content; animation: deslizar 40s linear infinite; }
+  .cinta:hover .cinta__pista { animation-play-state: paused; }
+  .cinta ul { display: flex; list-style: none; margin: 0; padding: 0; }
+  .cinta li { display: flex; align-items: center; gap: 2rem; padding-right: 2rem; font-family: var(--display); font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 500; letter-spacing: -0.03em; white-space: nowrap; }
+  .cinta li span { color: var(--acento); font-size: 0.7em; }
+  @keyframes deslizar { to { transform: translateX(-50%); } }
+
+  .seccion { padding-top: clamp(5rem, 12vw, 9rem); }
+  .seccion__cabeza { margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+  .seccion__cabeza h2 { font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: -0.045em; }
+  .casos { display: grid; gap: clamp(4rem, 10vw, 7rem); }
+
+  .enfoque { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .enfoque li { padding: 2rem; background: var(--superficie); border-radius: var(--radio); transition: background-color 0.4s var(--ease), transform 0.5s var(--ease); }
+  .enfoque li:hover { background: var(--acento-suave); }
+  .enfoque__num { font-size: 0.8125rem; font-weight: 600; color: var(--acento-texto); }
+  .enfoque h3 { font-size: 1.5rem; margin: 2.5rem 0 0.75rem; letter-spacing: -0.03em; }
+  .enfoque p { margin: 0; color: var(--texto-suave); }
+  @media (min-width: 52rem) { .enfoque { grid-template-columns: repeat(3, 1fr); } }
+</style>

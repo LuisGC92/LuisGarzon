@@ -1,0 +1,160 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../config';
+
+export async function getStaticPaths() {
+  const casos = (await getCollection('casos', ({ data }) => !data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
+  return casos.map((caso, i) => ({
+    params: { slug: caso.id },
+    props: { caso, siguiente: casos.length > 1 ? casos[(i + 1) % casos.length] : undefined },
+  }));
+}
+
+interface Props { caso: CollectionEntry<'casos'>; siguiente?: CollectionEntry<'casos'>; }
+const { caso, siguiente } = Astro.props;
+const d = caso.data;
+const { Content } = await render(caso);
+const escapar = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+const tituloResultados = escapar(d.resultadosTitulo).replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+const ficha = [
+  { etiqueta: 'Rol', valor: d.rol },
+  { etiqueta: 'Alcance', valor: d.alcance },
+  ...(d.equipo ? [{ etiqueta: 'Equipo', valor: d.equipo }] : []),
+  { etiqueta: 'Año', valor: String(d.anio) },
+];
+---
+
+<Base titulo={`${d.titulo}: caso de estudio`} descripcion={d.resumen} progreso>
+  <article>
+    <header class="contenedor intro">
+      <a href={url('/#casos')} class="volver"><span aria-hidden="true">←</span> Todos los casos</a>
+      <p class="eyebrow intro__eyebrow">Caso de estudio · {d.anio}</p>
+      <h1 class="intro__titulo"><span>{d.titulo}</span></h1>
+      <p class="intro__resumen">{d.resumen}</p>
+
+      <dl class="ficha">
+        {ficha.map((f) => (
+          <div><dt>{f.etiqueta}</dt><dd>{f.valor}</dd></div>
+        ))}
+        {d.sitio && (
+          <div><dt>Sitio en vivo</dt><dd><a href={d.sitio.url} target="_blank" rel="noopener">{d.sitio.texto} <span class="flecha">↗</span></a></dd></div>
+        )}
+      </dl>
+    </header>
+
+    <div class="contenedor">
+      <div class="portada">
+        <img src={url(d.portada)} alt={d.portadaAlt} />
+      </div>
+    </div>
+
+    <div class="contenedor cuerpo">
+      <div class="prosa" id="prosa">
+        <Content />
+      </div>
+    </div>
+
+    {d.resultados.length > 0 && (
+      <section class="contenedor resultados">
+        <div class="prosa"><p class="eyebrow">Resultados e impacto</p></div>
+        <h2 class="resultados__titulo" data-reveal set:html={tituloResultados} />
+        <ul class="metricas">
+          {d.resultados.map((r, i) => (
+            <li data-reveal style={`--delay:${i * 0.12}s`}>
+              <span class="metricas__valor" data-contar={r.valor}>{r.valor}</span>
+              <p>{r.texto}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="contenedor aprendizaje" data-reveal>
+      <p class="eyebrow">Aprendizaje clave</p>
+      <blockquote>{d.aprendizaje}</blockquote>
+    </section>
+
+    <nav class="contenedor fin" aria-label="Navegación entre casos">
+      {siguiente ? (
+        <a href={url(`/casos/${siguiente.id}`)} class="siguiente" data-reveal>
+          <span class="eyebrow">Siguiente caso</span>
+          <span class="siguiente__titulo">{siguiente.data.titulo} <span class="flecha">↗</span></span>
+        </a>
+      ) : (
+        <a href={url('/')} class="siguiente" data-reveal>
+          <span class="eyebrow">Gracias por leer</span>
+          <span class="siguiente__titulo">Volver al inicio <span class="flecha">↗</span></span>
+        </a>
+      )}
+    </nav>
+  </article>
+</Base>
+
+<script>
+  // Marca los bloques del Markdown para revelarlos al hacer scroll.
+  document.querySelectorAll('#prosa > *').forEach((el) => el.setAttribute('data-reveal', ''));
+
+  // Contador animado para las métricas numéricas.
+  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const io = new IntersectionObserver((entradas) => {
+    entradas.forEach((e) => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const el = e.target as HTMLElement;
+      const final = Number(el.dataset.contar);
+      if (reducir || !Number.isFinite(final)) return;
+      const inicio = performance.now();
+      const paso = (t: number) => {
+        const p = Math.min((t - inicio) / 1200, 1);
+        el.textContent = String(Math.round(final * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(paso);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('[data-contar]').forEach((el) => io.observe(el));
+</script>
+
+<style>
+  .intro { padding-block: clamp(2rem, 6vw, 4rem) clamp(2.5rem, 6vw, 4rem); }
+  .volver { display: flex; width: fit-content; gap: 0.4rem; font-size: 0.9375rem; color: var(--texto-suave); margin-bottom: clamp(2.5rem, 7vw, 5rem); transition: color 0.3s, gap 0.4s var(--ease); }
+  .volver:hover { color: var(--texto); gap: 0.7rem; }
+  .intro__eyebrow { animation: aparecer 0.9s var(--ease) both; }
+  .intro__titulo { font-size: clamp(3.5rem, 14vw, 11rem); letter-spacing: -0.06em; line-height: 0.92; overflow: hidden; padding-bottom: 0.06em; }
+  .intro__titulo span { display: inline-block; animation: subir 1.1s var(--ease) both; }
+  .intro__resumen { font-family: var(--display); font-size: clamp(1.25rem, 2.6vw, 1.75rem); line-height: 1.35; letter-spacing: -0.02em; max-width: 36ch; margin: 2rem 0 0; color: var(--texto-suave); animation: aparecer 1s 0.25s var(--ease) both; }
+  .ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1.5rem 2rem; margin: clamp(2.5rem, 6vw, 4rem) 0 0; padding-top: 1.75rem; border-top: 1px solid var(--borde); animation: aparecer 1s 0.4s var(--ease) both; }
+  .ficha dt { font-size: 0.8125rem; color: var(--texto-suave); margin-bottom: 0.35rem; }
+  .ficha dd { margin: 0; font-weight: 500; }
+  .ficha a { border-bottom: 1px solid var(--acento); }
+  .ficha a:hover { color: var(--acento-texto); }
+
+  .portada { position: relative; overflow: hidden; height: clamp(22rem, 62vw, 40rem); border-radius: var(--radio); background: radial-gradient(circle at 75% 15%, color-mix(in srgb, var(--acento) 28%, transparent), transparent 55%), var(--superficie); animation: aparecer 1.1s 0.5s var(--ease) both; }
+  .portada img { position: absolute; left: 50%; top: 12%; transform: translateX(-50%); width: auto; max-width: none; height: 120%; border-radius: 28px; box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.4); }
+
+  .cuerpo { padding-top: clamp(4rem, 10vw, 7rem); }
+
+  .resultados { padding-top: 7rem; }
+  .resultados__titulo { font-size: clamp(2.25rem, 6vw, 4.5rem); letter-spacing: -0.045em; margin: 0 auto 3rem; max-width: var(--ancho-lectura); }
+  .metricas { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .metricas li { padding: 2rem; border-radius: var(--radio); background: var(--superficie); }
+  .metricas__valor { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(4rem, 10vw, 7rem); line-height: 1; letter-spacing: -0.06em; color: var(--acento); font-variant-numeric: tabular-nums; }
+  .metricas p { margin: 1.25rem 0 0; color: var(--texto-suave); }
+  @media (min-width: 52rem) { .metricas { grid-template-columns: repeat(3, 1fr); } }
+
+  .aprendizaje { padding-top: clamp(5rem, 12vw, 8rem); text-align: center; }
+  .aprendizaje .eyebrow { justify-content: center; }
+  .aprendizaje blockquote { margin: 0 auto; max-width: 30ch; font-family: var(--display); font-weight: 500; font-size: clamp(1.75rem, 4.5vw, 3rem); line-height: 1.15; letter-spacing: -0.035em; text-wrap: balance; }
+
+  .fin { padding-top: clamp(5rem, 12vw, 8rem); }
+  .siguiente { display: block; padding: clamp(2rem, 5vw, 3.5rem); border-radius: var(--radio); background: var(--texto); color: var(--fondo); transition: background-color 0.5s var(--ease); }
+  .siguiente:hover { background: var(--acento); color: var(--sobre-acento); }
+  .siguiente .eyebrow { color: inherit; opacity: 0.7; }
+  .siguiente:hover .eyebrow::before { background: currentColor; }
+  .siguiente__titulo { display: block; font-family: var(--display); font-weight: 600; font-size: clamp(2.25rem, 7vw, 5rem); letter-spacing: -0.05em; line-height: 1; }
+
+  @keyframes subir { from { transform: translateY(105%); } to { transform: none; } }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+</style>

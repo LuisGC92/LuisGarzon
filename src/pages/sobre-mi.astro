@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { perfil } from '../config';
+
+const habilidades = [
+  { grupo: 'Contenido', items: ['UX Writing y microcopy', 'Content Design', 'Voz y tono', 'Guías de estilo', 'Copywriting'] },
+  { grupo: 'Método', items: ['Heurísticas de Nielsen', 'Design Thinking', 'Diseño centrado en el usuario', 'Arquitectura de la información', 'Pruebas de contenido'] },
+  { grupo: 'Herramientas', items: ['Figma', 'FigJam', 'Notion', 'Herramientas de IA generativa'] },
+];
+---
+
+<Base titulo="Sobre mí" descripcion={`Quién es ${perfil.nombre} y cómo trabaja como ${perfil.rol}.`}>
+  <section class="contenedor sobre">
+    <p class="eyebrow aparecer">Sobre mí</p>
+    <h1 class="sobre__titulo aparecer">Publicista que se especializó en que <em>las interfaces se entiendan.</em></h1>
+
+    <div class="sobre__cuerpo">
+      <div class="sobre__texto" data-reveal>
+        <p>Soy {perfil.nombre}, UX Writer y Content Designer. Vengo de la publicidad y el copywriting, donde aprendí a escribir para persuadir. En el diseño de producto aprendí algo más difícil: escribir para que una persona complete una tarea sin dudar.</p>
+        <p>Trabajo en la intersección entre las necesidades de las personas y los objetivos del negocio. Investigo antes de escribir, justifico cada decisión con un racional y construyo sistemas de contenido para que un producto hable con una sola voz en cada pantalla.</p>
+      </div>
+
+      <div class="habilidades">
+        {habilidades.map((h, i) => (
+          <div data-reveal style={`--delay:${i * 0.1}s`}>
+            <h2>{h.grupo}</h2>
+            <ul>{h.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sobre { padding-top: clamp(4rem, 10vw, 8rem); }
+  .aparecer { animation: aparecer 1s var(--ease) both; }
+  .sobre__titulo { font-size: clamp(2.5rem, 7vw, 5.75rem); letter-spacing: -0.05em; max-width: 16ch; animation-delay: 0.08s; }
+  .sobre__titulo em { color: var(--acento); }
+  .sobre__cuerpo { display: grid; gap: clamp(3rem, 8vw, 6rem); margin-top: clamp(3rem, 8vw, 6rem); }
+  .sobre__texto p { font-size: clamp(1.125rem, 2vw, 1.3125rem); line-height: 1.6; margin: 0 0 1.5rem; max-width: 40ch; }
+  .habilidades { display: grid; gap: 2.5rem; }
+  .habilidades h2 { font-size: 0.8125rem; font-family: var(--sans); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--acento-texto); margin-bottom: 1rem; }
+  .habilidades ul { list-style: none; margin: 0; padding: 0; }
+  .habilidades li { padding: 0.75rem 0; border-bottom: 1px solid var(--borde); font-family: var(--display); font-size: 1.25rem; letter-spacing: -0.02em; transition: padding 0.4s var(--ease), color 0.3s; }
+  .habilidades li:hover { padding-left: 0.5rem; color: var(--acento-texto); }
+  @media (min-width: 52rem) { .sobre__cuerpo { grid-template-columns: 1.1fr 1fr; } }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+</style>

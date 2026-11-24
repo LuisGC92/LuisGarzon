@@ -1,0 +1,170 @@
+---
+import '../styles/global.css';
+import { perfil, url } from '../config';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  progreso?: boolean;
+}
+const {
+  titulo,
+  descripcion = `${perfil.nombre} — ${perfil.rol}. Casos de estudio de UX Writing y Content Design.`,
+  progreso = false,
+} = Astro.props;
+const tituloCompleto = titulo ? `${titulo} · ${perfil.nombre}` : `${perfil.nombre} · ${perfil.rol}`;
+const ruta = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+const nav = [
+  { texto: 'Casos', href: url('/#casos') },
+  { texto: 'Sobre mí', href: url('/sobre-mi'), activo: ruta.startsWith('/sobre-mi') },
+];
+const contacto = perfil.email ? `mailto:${perfil.email}` : perfil.linkedin;
+const anio = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        const t = localStorage.getItem('tema');
+        if (t) document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    {progreso && <div class="progreso" aria-hidden="true"><span></span></div>}
+
+    <header class="cabecera">
+      <div class="contenedor cabecera__fila">
+        <a href={url('/')} class="marca" aria-label={`${perfil.nombre}, ir al inicio`}>
+          <span class="marca__punto"></span>{perfil.nombre}
+        </a>
+        <nav aria-label="Principal">
+          <ul>
+            {nav.map((n) => (
+              <li><a href={n.href} aria-current={n.activo ? 'page' : undefined}>{n.texto}</a></li>
+            ))}
+            {contacto && <li><a href={contacto} class="nav__contacto">Contacto</a></li>}
+          </ul>
+        </nav>
+        <button class="tema" type="button" aria-label="Cambiar entre tema claro y oscuro">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 0 18V3Z"/><circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer class="pie">
+      <div class="contenedor">
+        <p class="pie__cta" data-reveal>¿Hablamos de <em class="serif">palabras</em> que funcionan?</p>
+        <div class="pie__fila">
+          {contacto ? (
+            <a class="boton" href={contacto}>Escríbeme <span class="flecha">↗</span></a>
+          ) : (
+            <span></span>
+          )}
+          <ul class="pie__enlaces">
+            {perfil.linkedin && <li><a href={perfil.linkedin} rel="me noopener" target="_blank">LinkedIn ↗</a></li>}
+            {perfil.cv && <li><a href={perfil.cv} target="_blank" rel="noopener">CV ↗</a></li>}
+          </ul>
+        </div>
+        <p class="pie__legal">© {anio} {perfil.nombre}. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Revelado progresivo al hacer scroll.
+      const io = new IntersectionObserver(
+        (entradas) => entradas.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+        }),
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.08 },
+      );
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // Cabecera compacta al hacer scroll y barra de progreso de lectura.
+      const cab = document.querySelector('.cabecera');
+      const barra = document.querySelector<HTMLElement>('.progreso span');
+      const alScroll = () => {
+        cab?.classList.toggle('cabecera--scroll', scrollY > 24);
+        if (barra) {
+          const max = document.documentElement.scrollHeight - innerHeight;
+          barra.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+        }
+      };
+      addEventListener('scroll', alScroll, { passive: true });
+      alScroll();
+
+      // Selector de tema.
+      document.querySelector('.tema')?.addEventListener('click', () => {
+        const raiz = document.documentElement;
+        const oscuroActual = raiz.dataset.theme
+          ? raiz.dataset.theme === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches;
+        const nuevo = oscuroActual ? 'light' : 'dark';
+        raiz.dataset.theme = nuevo;
+        try { localStorage.setItem('tema', nuevo); } catch {}
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .progreso { position: fixed; inset: 0 0 auto; height: 3px; z-index: 60; }
+  .progreso span { display: block; height: 100%; background: var(--acento); transform-origin: left; transform: scaleX(0); }
+
+  .cabecera {
+    position: sticky; top: 0; z-index: 50;
+    transition: background-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .cabecera--scroll {
+    background: color-mix(in srgb, var(--fondo) 78%, transparent);
+    backdrop-filter: saturate(1.6) blur(14px);
+    -webkit-backdrop-filter: saturate(1.6) blur(14px);
+    box-shadow: 0 1px 0 var(--borde);
+  }
+  .cabecera__fila { display: flex; align-items: center; gap: 1rem; height: 4.5rem; }
+  .marca { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; margin-right: auto; }
+  .marca__punto { width: 10px; height: 10px; border-radius: 50%; background: var(--acento); transition: transform 0.5s var(--ease); }
+  .marca:hover .marca__punto { transform: scale(1.6); }
+  nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  nav a {
+    display: block; padding: 0.45rem 0.85rem; border-radius: 999px;
+    font-size: 0.9375rem; color: var(--texto-suave);
+    transition: color 0.3s, background-color 0.3s;
+  }
+  nav a:hover, nav a[aria-current='page'] { color: var(--texto); background: var(--superficie); }
+  .tema {
+    display: grid; place-items: center; width: 2.4rem; height: 2.4rem;
+    border-radius: 50%; border: 1px solid var(--borde); background: transparent;
+    color: var(--texto); cursor: pointer; transition: transform 0.6s var(--ease), border-color 0.3s;
+  }
+  .tema:hover { transform: rotate(180deg); border-color: var(--texto); }
+  @media (max-width: 30rem) {
+    nav a { padding-inline: 0.55rem; font-size: 0.875rem; }
+    .nav__contacto { display: none !important; }
+  }
+
+  .pie { margin-top: clamp(6rem, 14vw, 10rem); padding-block: clamp(4rem, 8vw, 6rem) 2rem; border-top: 1px solid var(--borde); }
+  .pie__cta { font-family: var(--display); font-weight: 600; letter-spacing: -0.04em; line-height: 1; font-size: clamp(2.5rem, 8vw, 6rem); margin: 0 0 2.5rem; max-width: 14ch; }
+  .pie__fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .pie__enlaces { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+  .pie__enlaces a { color: var(--texto-suave); transition: color 0.3s; }
+  .pie__enlaces a:hover { color: var(--acento-texto); }
+  .pie__legal { margin: 4rem 0 0; font-size: 0.8125rem; color: var(--texto-suave); }
+</style>

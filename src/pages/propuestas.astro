@@ -2,7 +2,6 @@
 // Página temporal para elegir el hero. No está enlazada ni se indexa.
 import Base from '../layouts/Base.astro';
 
-const palabrasRotativas = ['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.'];
 const chips = [
   { tipo: 'boton', antes: 'Submit', despues: 'Crear mi cuenta →', x: 8, y: 14, prof: 0.6 },
   { tipo: 'error', antes: 'Error 422: invalid input', despues: 'Revisa el formato del correo', x: 68, y: 8, prof: 1 },
@@ -10,99 +9,132 @@ const chips = [
   { tipo: 'tooltip', antes: 'Click here for more info', despues: '¿Para qué pedimos esto?', x: 4, y: 78, prof: 1.2 },
   { tipo: 'vacio', antes: 'No data', despues: 'Aún no tienes casos. Crea el primero', x: 40, y: 88, prof: 0.5 },
 ];
-const titularTono = 'Diseño las palabras que hacen que un producto se entienda.';
+
+// Reescritura: cada tramo de jerga tiene su reemplazo y el motivo del cambio.
+const tramos = [
+  { antes: 'Implementamos soluciones', despues: 'Diseño las palabras', motivo: 'Verbo vacío', sugerencia: 'Di qué haces' },
+  { antes: 'de interacción orientadas a optimizar', despues: 'que hacen que un producto', motivo: 'Jerga', sugerencia: 'Habla del producto' },
+  { antes: 'la experiencia.', despues: 'se entienda.', motivo: 'Abstracto', sugerencia: 'Nombra el resultado', acento: true },
+];
+
+const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
 ---
 
 <Base titulo="Propuestas de hero" noindex>
   <section class="contenedor intro">
-    <p class="eyebrow">Exploración · Hero de la portada</p>
-    <h1>Cuatro propuestas para <em>elegir</em></h1>
-    <p class="intro__texto">Cada una parte de la misma idea de la referencia —un titular que reacciona—, pero la convierte en una metáfora del trabajo de un UX Writer. Pruébalas con el cursor; en el móvil se animan solas.</p>
+    <p class="eyebrow">Exploración · Hero de la portada · Ronda 2</p>
+    <h1>Cuatro propuestas que <em>se escriben</em></h1>
+    <p class="intro__texto">Todas parten de tu oficio: el texto se teclea, se corrige y se reescribe delante del visitante. Pruébalas con el cursor y el teclado; en el móvil se animan solas.</p>
   </section>
 
-  <!-- 01 · Reescritura en vivo -->
+  <!-- 01 · Reescritura en vivo (v2) -->
   <section class="propuesta" id="p1">
     <div class="contenedor">
       <header class="cab">
         <span class="cab__num">01</span>
         <div>
-          <h2>Reescritura en vivo</h2>
-          <p><strong>Concepto:</strong> el titular empieza con jerga corporativa y se edita delante del visitante hasta quedar claro. Muestra el oficio en tres segundos: detectar la fricción y reescribir.</p>
+          <h2>Reescritura en vivo <span class="cab__tag">v2</span></h2>
+          <p><strong>Concepto:</strong> un editor detecta la jerga como lo haría un corrector —con subrayado ondulado y una sugerencia— y la reescribe tramo a tramo. Un panel lateral muestra cómo mejora la claridad en cada cambio: el racional, visible.</p>
         </div>
       </header>
-      <div class="lienzo lienzo--editor">
-        <p class="editor__barra" aria-hidden="true"><span></span><span></span><span></span><em>titular-portada.txt</em></p>
-        <p class="editor__texto" aria-live="off"><span class="editor__escrito"></span><em class="editor__acento"></em><span class="editor__caret"></span></p>
-        <p class="editor__nota" aria-hidden="true">Jerga → claridad</p>
-        <button class="editor__repetir" type="button">↺ Repetir</button>
+      <div class="lienzo rw" data-rw>
+        <div class="rw__editor">
+          <div class="rw__barra" aria-hidden="true">
+            <span class="rw__pestana rw__pestana--activa">titular.txt</span>
+            <span class="rw__estado" data-rw-estado>Revisando…</span>
+          </div>
+          <p class="rw__texto" aria-label="Diseño las palabras que hacen que un producto se entienda.">
+            {tramos.map((t, i) => (
+              <>
+                <span class={`rw__tramo${t.acento ? ' rw__tramo--acento' : ''}`} data-tramo={i} data-antes={t.antes} data-despues={t.despues} aria-hidden="true">
+                  <span class="rw__sugerencia" aria-hidden="true"><b>{t.motivo}</b> · {t.sugerencia}</span>
+                  <span class="rw__contenido">{t.antes}</span>
+                </span>{' '}
+              </>
+            ))}
+            <span class="rw__caret" aria-hidden="true"></span>
+          </p>
+        </div>
+        <aside class="rw__panel" aria-hidden="true">
+          <p class="rw__panel-titulo">Análisis</p>
+          <div class="rw__metrica">
+            <div class="rw__fila"><span>Claridad</span><b data-rw-claridad>32</b></div>
+            <div class="rw__barra-progreso"><span data-rw-barra></span></div>
+          </div>
+          <div class="rw__metrica rw__metrica--doble">
+            <div><span>Jerga</span><b data-rw-jerga>3</b></div>
+            <div><span>Palabras</span><b data-rw-palabras>11</b></div>
+          </div>
+          <ol class="rw__log" data-rw-log></ol>
+        </aside>
+        <button class="repetir" type="button" data-rw-repetir>↺ Repetir</button>
       </div>
     </div>
   </section>
 
-  <!-- 02 · Lente de claridad -->
+  <!-- 02 · Microcopy vivo (v2) -->
   <section class="propuesta" id="p2">
     <div class="contenedor">
       <header class="cab">
         <span class="cab__num">02</span>
         <div>
-          <h2>Lente de claridad</h2>
-          <p><strong>Concepto:</strong> el titular está desenfocado y el cursor funciona como una lente que lo vuelve nítido. Es la metáfora directa del valor que aportas: donde llega tu trabajo, el mensaje se entiende.</p>
+          <h2>Microcopy vivo <span class="cab__tag">v2</span></h2>
+          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, confiar, convertir—. Alrededor flotan piezas de interfaz; al pasar el cursor por cada una ves el «antes» genérico frente a tu «después».</p>
         </div>
       </header>
-      <div class="lienzo lente" data-lente>
-        <p class="lente__capa lente__capa--borrosa" aria-hidden="true"><span class="lente__texto">Diseño las palabras que hacen que un producto <em>se entienda.</em></span></p>
-        <p class="lente__capa lente__capa--nitida"><span class="lente__texto">Diseño las palabras que hacen que un producto <em>se entienda.</em></span></p>
-        <span class="lente__aro" aria-hidden="true"><span>claridad</span></span>
+      <div class="lienzo micro" data-micro>
+        {chips.map((c) => (
+          <button type="button" class={`chip chip--${c.tipo}${c.x > 50 ? ' chip--der' : ''}`} style={`--x:${c.x}%;--y:${c.y}%;--prof:${c.prof}`} data-chip>
+            <span class="chip__despues">{c.despues}</span>
+            <span class="chip__antes"><s>{c.antes}</s></span>
+          </button>
+        ))}
+        <p class="titular micro__titular">
+          Diseño las palabras que hacen que un producto <em class="micro__tecleo"><span data-micro-texto>se entienda.</span><span class="caret" aria-hidden="true"></span></em>
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- 03 · Microcopy vivo -->
+  <!-- 03 · Conversación -->
   <section class="propuesta" id="p3">
     <div class="contenedor">
       <header class="cab">
         <span class="cab__num">03</span>
         <div>
-          <h2>Microcopy vivo</h2>
-          <p><strong>Concepto:</strong> la promesa rota entre los objetivos que cumples (entender, confiar, convertir) y alrededor flotan piezas reales de interfaz. Al pasar el cursor por cada una ves el «antes» genérico frente a tu «después».</p>
+          <h2>Conversación</h2>
+          <p><strong>Concepto:</strong> el titular se teclea a la izquierda mientras, a la derecha, una interfaz responde dudas reales de usuarios. El indicador de «escribiendo…» y las respuestas tecleadas demuestran que escribes para conversar, no para rellenar pantallas.</p>
         </div>
       </header>
-      <div class="lienzo micro" data-micro>
-        {chips.map((c) => (
-          <button type="button" class={`chip chip--${c.tipo}`} style={`--x:${c.x}%;--y:${c.y}%;--prof:${c.prof}`} data-chip>
-            <span class="chip__despues">{c.despues}</span>
-            <span class="chip__antes"><s>{c.antes}</s></span>
-          </button>
-        ))}
-        <p class="micro__titular">
-          Diseño las palabras que hacen que un producto
-          <span class="rota" data-rota>
-            {palabrasRotativas.map((p, i) => <em class={i === 0 ? 'activa' : ''}>{p}</em>)}
-          </span>
-        </p>
+      <div class="lienzo conv" data-conv>
+        <p class="titular conv__titular"><span data-conv-titular></span><em data-conv-acento></em><span class="caret" aria-hidden="true"></span></p>
+        <div class="conv__chat" aria-hidden="true">
+          <div class="conv__cabecera"><span class="conv__avatar"></span><div><b>Asistente</b><small data-conv-estado>en línea</small></div></div>
+          <div class="conv__mensajes" data-conv-mensajes></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 04 · Voz y tono -->
+  <!-- 04 · Teclado -->
   <section class="propuesta" id="p4">
     <div class="contenedor">
       <header class="cab">
         <span class="cab__num">04</span>
         <div>
-          <h2>Voz y tono</h2>
-          <p><strong>Concepto:</strong> cada letra cambia de peso según la cercanía del cursor: el mismo mensaje dicho con más o menos intensidad. Traduce a tipografía la idea de modular el tono sin cambiar la voz.</p>
+          <h2>Teclado</h2>
+          <p><strong>Concepto:</strong> el titular se teclea y cada letra hunde su tecla en un teclado minimalista. Al terminar, el teclado responde a lo que escribe el visitante: una invitación lúdica a «escribir contigo».</p>
         </div>
       </header>
-      <div class="lienzo tono" data-tono>
-        <p class="tono__titular" aria-label={titularTono}>
-          {titularTono.split(' ').map((palabra, i, arr) => (
-            <span class={`tono__palabra${i >= arr.length - 2 ? ' tono__palabra--acento' : ''}`} aria-hidden="true">
-              {[...palabra].map((l) => <span class="tono__letra">{l}</span>)}
-            </span>
+      <div class="lienzo tec" data-tec>
+        <p class="titular tec__titular"><span data-tec-titular></span><em data-tec-acento></em><span class="caret" aria-hidden="true"></span></p>
+        <div class="tec__teclado" aria-hidden="true">
+          {filas.map((f) => (
+            <div class="tec__fila">{[...f].map((k) => <span class="tecla" data-k={k}>{k}</span>)}</div>
           ))}
-        </p>
-        <div class="tono__escala" aria-hidden="true"><span>Neutro</span><span>Enfático</span></div>
+          <div class="tec__fila"><span class="tecla tecla--espacio" data-k=" ">espacio</span></div>
+        </div>
+        <p class="tec__pista" data-tec-pista>Ahora escribe tú: el teclado te sigue.</p>
       </div>
     </div>
   </section>
@@ -111,79 +143,112 @@ const titularTono = 'Diseño las palabras que hacen que un producto se entienda.
 <script>
   const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const tactil = matchMedia('(hover: none)').matches;
+  const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  /** Teclea texto en un elemento; se cancela si cambia el turno. */
+  const teclear = async (el: HTMLElement, texto: string, vel: number, vivo: () => boolean, alTeclear?: (c: string) => void) => {
+    for (const c of texto) {
+      if (!vivo()) return false;
+      el.textContent += c; alTeclear?.(c);
+      await espera(vel * (0.6 + Math.random() * 0.9) + (c === ' ' ? vel * 0.8 : 0) + (/[.,]/.test(c) ? vel * 4 : 0));
+    }
+    return vivo();
+  };
+  const borrar = async (el: HTMLElement, vel: number, vivo: () => boolean) => {
+    while (el.textContent) {
+      if (!vivo()) return false;
+      el.textContent = el.textContent.slice(0, -1);
+      await espera(vel);
+    }
+    return vivo();
+  };
+  /** Arranca una animación cuando su sección entra en pantalla. */
+  const alVer = (el: Element, fn: () => void) =>
+    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { fn(); o.disconnect(); } }, { threshold: 0.45 }).observe(el);
 
   /* ---------- 01 · Reescritura en vivo ---------- */
   {
-    const escrito = document.querySelector<HTMLElement>('.editor__escrito')!;
-    const acento = document.querySelector<HTMLElement>('.editor__acento')!;
-    const nota = document.querySelector<HTMLElement>('.editor__nota')!;
-    const lienzo = document.querySelector<HTMLElement>('.lienzo--editor')!;
-    const jerga = 'Implementamos soluciones de interacción orientadas a optimizar la experiencia.';
-    const base = 'Diseño las palabras que hacen que un producto ';
-    const final = 'se entienda.';
-    const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const rw = document.querySelector<HTMLElement>('[data-rw]')!;
+    const tramos = [...rw.querySelectorAll<HTMLElement>('[data-tramo]')];
+    const caret = rw.querySelector<HTMLElement>('.rw__caret')!;
+    const estado = rw.querySelector<HTMLElement>('[data-rw-estado]')!;
+    const claridad = rw.querySelector<HTMLElement>('[data-rw-claridad]')!;
+    const barra = rw.querySelector<HTMLElement>('[data-rw-barra]')!;
+    const jerga = rw.querySelector<HTMLElement>('[data-rw-jerga]')!;
+    const palabras = rw.querySelector<HTMLElement>('[data-rw-palabras]')!;
+    const log = rw.querySelector<HTMLElement>('[data-rw-log]')!;
+    const pasos = [{ c: 32, j: 3, p: 11 }, { c: 58, j: 2, p: 10 }, { c: 79, j: 1, p: 9 }, { c: 96, j: 0, p: 9 }];
     let turno = 0;
 
-    const escribir = async (el: HTMLElement, texto: string, vel: number, id: number) => {
-      for (const c of texto) { if (id !== turno) return; el.textContent += c; await espera(vel + Math.random() * vel * 0.6); }
+    const contar = (el: HTMLElement, hasta: number) => {
+      const desde = Number(el.textContent); const t0 = performance.now();
+      const f = (t: number) => { const k = Math.min((t - t0) / 600, 1); el.textContent = String(Math.round(desde + (hasta - desde) * k)); if (k < 1) requestAnimationFrame(f); };
+      requestAnimationFrame(f);
+    };
+    const metricas = (i: number) => {
+      contar(claridad, pasos[i].c); contar(jerga, pasos[i].j); contar(palabras, pasos[i].p);
+      barra.style.width = pasos[i].c + '%';
+      rw.style.setProperty('--salud', String(pasos[i].c / 100));
+    };
+    const reiniciar = () => {
+      tramos.forEach((t) => {
+        t.classList.remove('rw__tramo--activo', 'rw__tramo--hecho'); t.classList.add('rw__tramo--marcado');
+        t.querySelector('.rw__contenido')!.textContent = t.dataset.antes!;
+      });
+      log.innerHTML = ''; estado.textContent = 'Revisando…'; rw.classList.remove('rw--listo');
+      claridad.textContent = '32'; jerga.textContent = '3'; palabras.textContent = '11'; metricas(0);
+      tramos[tramos.length - 1].after(caret);
     };
     const correr = async () => {
-      const id = ++turno;
-      escrito.textContent = ''; acento.textContent = '';
-      lienzo.classList.remove('seleccion', 'listo'); nota.classList.remove('visible');
-      if (reducir) { escrito.textContent = base; acento.textContent = final; lienzo.classList.add('listo'); return; }
-      await espera(400);
-      await escribir(escrito, jerga, 28, id); if (id !== turno) return;
-      await espera(700);
-      lienzo.classList.add('seleccion'); nota.classList.add('visible');
-      await espera(1100); if (id !== turno) return;
-      lienzo.classList.remove('seleccion'); escrito.textContent = '';
-      await espera(350);
-      await escribir(escrito, base, 45, id); if (id !== turno) return;
-      await escribir(acento, final, 70, id); if (id !== turno) return;
-      lienzo.classList.add('listo');
+      const id = ++turno; const vivo = () => id === turno;
+      reiniciar();
+      if (reducir) {
+        tramos.forEach((t) => { t.classList.remove('rw__tramo--marcado'); t.classList.add('rw__tramo--hecho'); t.querySelector('.rw__contenido')!.textContent = t.dataset.despues!; });
+        metricas(3); estado.textContent = 'Listo'; rw.classList.add('rw--listo'); return;
+      }
+      await espera(1200);
+      for (let i = 0; i < tramos.length; i++) {
+        const t = tramos[i]; const cont = t.querySelector<HTMLElement>('.rw__contenido')!;
+        if (!vivo()) return;
+        t.classList.add('rw__tramo--activo'); estado.textContent = `Sugerencia ${i + 1} de ${tramos.length}`;
+        cont.after(caret);
+        await espera(1300);
+        t.classList.remove('rw__tramo--marcado');
+        if (!(await borrar(cont, 22, vivo))) return;
+        await espera(180);
+        if (!(await teclear(cont, t.dataset.despues!, 55, vivo))) return;
+        t.classList.remove('rw__tramo--activo'); t.classList.add('rw__tramo--hecho');
+        const li = document.createElement('li');
+        li.innerHTML = '<s></s><span></span>';
+        li.querySelector('s')!.textContent = t.dataset.antes!; li.querySelector('span')!.textContent = t.dataset.despues!;
+        log.append(li);
+        metricas(i + 1);
+        await espera(500);
+      }
+      tramos[tramos.length - 1].after(caret);
+      estado.textContent = 'Listo · 3 cambios aplicados'; rw.classList.add('rw--listo');
     };
-    document.querySelector('.editor__repetir')!.addEventListener('click', correr);
-    new IntersectionObserver((e, o) => { if (e[0].isIntersecting) { correr(); o.disconnect(); } }, { threshold: 0.5 }).observe(lienzo);
+    rw.querySelector('[data-rw-repetir]')!.addEventListener('click', correr);
+    reiniciar();
+    alVer(rw, correr);
   }
 
-  /* ---------- 02 · Lente de claridad ---------- */
-  {
-    const lente = document.querySelector<HTMLElement>('[data-lente]')!;
-    let objX = 0.3, objY = 0.5, x = 0.3, y = 0.5, dentro = false, t = 0;
-    lente.addEventListener('pointermove', (e) => {
-      const r = lente.getBoundingClientRect();
-      objX = (e.clientX - r.left) / r.width; objY = (e.clientY - r.top) / r.height; dentro = true;
-    });
-    lente.addEventListener('pointerleave', () => { dentro = false; });
-    const bucle = () => {
-      t += 0.006;
-      // Sin cursor, la lente recorre el titular sola.
-      if (!dentro || tactil) { objX = 0.5 + Math.sin(t * 1.3) * 0.38; objY = 0.5 + Math.sin(t * 2.1) * 0.22; }
-      x += (objX - x) * 0.12; y += (objY - y) * 0.12;
-      lente.style.setProperty('--lx', `${x * 100}%`); lente.style.setProperty('--ly', `${y * 100}%`);
-      requestAnimationFrame(bucle);
-    };
-    if (reducir) lente.classList.add('lente--estatica'); else bucle();
-  }
-
-  /* ---------- 03 · Microcopy vivo ---------- */
+  /* ---------- 02 · Microcopy vivo ---------- */
   {
     const micro = document.querySelector<HTMLElement>('[data-micro]')!;
-    const rota = micro.querySelector<HTMLElement>('[data-rota]')!;
-    const opciones = [...rota.querySelectorAll('em')];
-    let i = 0;
-    const ajustarAncho = () => { rota.style.width = `${opciones[i].offsetWidth}px`; };
-    ajustarAncho();
-    addEventListener('resize', ajustarAncho);
-    if (!reducir) setInterval(() => {
-      opciones[i].classList.replace('activa', 'sale');
-      const anterior = opciones[i];
-      setTimeout(() => anterior.classList.remove('sale'), 700);
-      i = (i + 1) % opciones.length;
-      opciones[i].classList.add('activa');
-      ajustarAncho();
-    }, 2400);
+    const texto = micro.querySelector<HTMLElement>('[data-micro-texto]')!;
+    const opciones = ['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.'];
+    const ciclo = async () => {
+      let i = 0;
+      while (true) {
+        await espera(2200);
+        await borrar(texto, 35, () => true);
+        await espera(250);
+        i = (i + 1) % opciones.length;
+        await teclear(texto, opciones[i], 70, () => true);
+      }
+    };
+    if (!reducir) alVer(micro, ciclo);
 
     micro.addEventListener('pointermove', (e) => {
       if (reducir) return;
@@ -191,7 +256,6 @@ const titularTono = 'Diseño las palabras que hacen que un producto se entienda.
       micro.style.setProperty('--mx', String((e.clientX - r.left) / r.width - 0.5));
       micro.style.setProperty('--my', String((e.clientY - r.top) / r.height - 0.5));
     });
-    // En pantallas táctiles, las piezas alternan solas entre el «antes» y el «después».
     const chipsEl = [...micro.querySelectorAll<HTMLElement>('[data-chip]')];
     chipsEl.forEach((c) => c.addEventListener('click', () => c.classList.toggle('chip--antes')));
     if (tactil && !reducir) {
@@ -200,40 +264,91 @@ const titularTono = 'Diseño las palabras que hacen que un producto se entienda.
     }
   }
 
-  /* ---------- 04 · Voz y tono ---------- */
+  /* ---------- 03 · Conversación ---------- */
   {
-    const tono = document.querySelector<HTMLElement>('[data-tono]')!;
-    const letras = [...tono.querySelectorAll<HTMLElement>('.tono__letra')];
-    let cx = -9999, cy = -9999, dentro = false, t = 0;
-    let centros: { x: number; y: number }[] = [];
-    const medir = () => {
-      const r = tono.getBoundingClientRect();
-      centros = letras.map((l) => { const b = l.getBoundingClientRect(); return { x: b.left - r.left + b.width / 2, y: b.top - r.top + b.height / 2 }; });
+    const conv = document.querySelector<HTMLElement>('[data-conv]')!;
+    const titular = conv.querySelector<HTMLElement>('[data-conv-titular]')!;
+    const acento = conv.querySelector<HTMLElement>('[data-conv-acento]')!;
+    const mensajes = conv.querySelector<HTMLElement>('[data-conv-mensajes]')!;
+    const estado = conv.querySelector<HTMLElement>('[data-conv-estado]')!;
+    const dialogo = [
+      { de: 'persona', texto: 'Me sale un error y no sé qué hice mal' },
+      { de: 'interfaz', texto: 'A tu correo le falta la @. Corrígelo y vuelve a intentarlo.' },
+      { de: 'persona', texto: '¿Es seguro contar mi historia aquí?' },
+      { de: 'interfaz', texto: 'Sí. Solo tu especialista leerá tus respuestas, y no afectan tu proceso.' },
+      { de: 'persona', texto: 'Gracias, ahora sí entiendo' },
+    ];
+    const burbuja = (de: string) => {
+      const b = document.createElement('p'); b.className = `burbuja burbuja--${de}`;
+      mensajes.append(b);
+      // Solo se conservan los últimos mensajes para que el chat no crezca sin fin.
+      while (mensajes.children.length > 4) mensajes.firstElementChild!.remove();
+      return b;
     };
-    tono.addEventListener('pointermove', (e) => { const r = tono.getBoundingClientRect(); cx = e.clientX - r.left; cy = e.clientY - r.top; dentro = true; });
-    tono.addEventListener('pointerleave', () => { dentro = false; });
-    const pesos = letras.map(() => 300);
-    const bucle = () => {
-      t += 0.02;
-      const r = tono.getBoundingClientRect();
-      const radio = Math.max(140, r.width * 0.16);
-      letras.forEach((l, i) => {
-        const c = centros[i]; if (!c) return;
-        let objetivo: number;
-        if (dentro && !tactil) {
-          const d = Math.hypot(c.x - cx, c.y - cy);
-          objetivo = 250 + Math.max(0, 1 - d / radio) * 650;
-        } else {
-          // Sin cursor, una onda recorre el titular de izquierda a derecha.
-          const fase = (c.x / r.width) * 6 - t * 2;
-          objetivo = 300 + (Math.sin(fase) * 0.5 + 0.5) ** 3 * 600;
+    const chat = async () => {
+      while (true) {
+        mensajes.innerHTML = '';
+        for (const m of dialogo) {
+          if (m.de === 'persona') {
+            await espera(900);
+            burbuja('persona').textContent = m.texto;
+          } else {
+            await espera(600);
+            estado.textContent = 'escribiendo…';
+            const b = burbuja('interfaz');
+            b.innerHTML = '<span class="puntos"><i></i><i></i><i></i></span>';
+            await espera(1300);
+            b.textContent = '';
+            await teclear(b, m.texto, 28, () => true);
+            estado.textContent = 'en línea';
+          }
         }
-        pesos[i] += (objetivo - pesos[i]) * 0.15;
-        l.style.fontVariationSettings = `'wght' ${pesos[i].toFixed(0)}`;
-      });
-      requestAnimationFrame(bucle);
+        await espera(3500);
+      }
     };
-    document.fonts.ready.then(() => { medir(); new ResizeObserver(medir).observe(tono); if (!reducir) bucle(); });
+    const iniciar = async () => {
+      if (reducir) {
+        titular.textContent = 'Diseño las palabras que hacen que un producto '; acento.textContent = 'se entienda.';
+        dialogo.slice(0, 4).forEach((m) => { burbuja(m.de).textContent = m.texto; });
+        return;
+      }
+      chat();
+      await espera(500);
+      await teclear(titular, 'Diseño las palabras que hacen que un producto ', 55, () => true);
+      await teclear(acento, 'se entienda.', 85, () => true);
+    };
+    alVer(conv, iniciar);
+  }
+
+  /* ---------- 04 · Teclado ---------- */
+  {
+    const tec = document.querySelector<HTMLElement>('[data-tec]')!;
+    const titular = tec.querySelector<HTMLElement>('[data-tec-titular]')!;
+    const acento = tec.querySelector<HTMLElement>('[data-tec-acento]')!;
+    const pista = tec.querySelector<HTMLElement>('[data-tec-pista]')!;
+    const teclas = new Map([...tec.querySelectorAll<HTMLElement>('[data-k]')].map((k) => [k.dataset.k!, k]));
+    const pulsar = (c: string) => {
+      const min = c.toLowerCase();
+      const base = min === 'ñ' ? 'ñ' : min.normalize('NFD').replace(/[̀-ͯ]/g, '');
+      const k = teclas.get(base); if (!k) return;
+      k.classList.remove('tecla--pulsada'); void k.offsetWidth; k.classList.add('tecla--pulsada');
+    };
+    const iniciar = async () => {
+      if (reducir) { titular.textContent = 'Diseño las palabras que hacen que un producto '; acento.textContent = 'se entienda.'; tec.classList.add('tec--libre'); return; }
+      await espera(500);
+      await teclear(titular, 'Diseño las palabras que hacen que un producto ', 70, () => true, pulsar);
+      await teclear(acento, 'se entienda.', 95, () => true, pulsar);
+      tec.classList.add('tec--libre');
+    };
+    alVer(tec, iniciar);
+    // Cuando el titular está escrito, el teclado responde a las teclas del visitante.
+    addEventListener('keydown', (e) => {
+      if (!tec.classList.contains('tec--libre') || e.metaKey || e.ctrlKey || e.altKey) return;
+      const r = tec.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      if (e.key.length === 1) { pulsar(e.key); pista.classList.add('tec__pista--oculta'); }
+    });
+    tec.querySelectorAll<HTMLElement>('[data-k]').forEach((k) => k.addEventListener('pointerdown', () => pulsar(k.dataset.k!)));
   }
 </script>
 
@@ -244,67 +359,84 @@ const titularTono = 'Diseño las palabras que hacen que un producto se entienda.
   .intro__texto { max-width: 52ch; color: var(--texto-suave); font-size: 1.125rem; margin: 1.5rem 0 0; }
 
   .propuesta { padding-top: clamp(4rem, 10vw, 7rem); }
-  .cab { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; margin-bottom: 1.5rem; max-width: 52rem; }
+  .cab { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; margin-bottom: 1.5rem; max-width: 54rem; }
   .cab__num { font-family: var(--display); font-weight: 600; font-size: 1rem; color: var(--acento-texto); padding-top: 0.35rem; }
-  .cab h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.035em; }
+  .cab h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.035em; display: flex; align-items: center; gap: 0.6rem; }
+  .cab__tag { font-family: var(--sans); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.2rem 0.55rem; border-radius: 999px; background: var(--acento-suave); color: var(--acento-texto); }
   .cab p { margin: 0.6rem 0 0; color: var(--texto-suave); }
   .cab strong { color: var(--texto); font-weight: 600; }
 
   .lienzo {
     position: relative; overflow: hidden;
-    min-height: clamp(26rem, 62vh, 38rem);
+    min-height: clamp(28rem, 66vh, 40rem);
     border-radius: var(--radio); background: var(--superficie);
-    padding: clamp(1.5rem, 5vw, 4rem);
-    display: flex; align-items: center;
+    padding: clamp(1.25rem, 5vw, 4rem);
   }
-  .lienzo :is(p) { margin: 0; }
-  .titular, .editor__texto, .lente__capa, .micro__titular, .tono__titular {
-    font-family: var(--display); font-weight: 600;
-    font-size: clamp(2.25rem, 6.6vw, 6rem); line-height: 1; letter-spacing: -0.045em;
-  }
+  .lienzo p { margin: 0; }
+  .titular { font-family: var(--display); font-weight: 600; font-size: clamp(2.25rem, 6.4vw, 5.75rem); line-height: 1; letter-spacing: -0.045em; }
   em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--acento); }
-
-  /* 01 */
-  .lienzo--editor { flex-direction: column; align-items: stretch; justify-content: center; }
-  .editor__barra { position: absolute; top: 1rem; left: 1.25rem; right: 1.25rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.8125rem; }
-  .editor__barra span { width: 10px; height: 10px; border-radius: 50%; background: var(--borde); }
-  .editor__barra em { font-family: var(--sans); font-style: normal; color: var(--texto-suave); margin-left: 0.6rem; font-size: 0.8125rem; }
-  .editor__texto { max-width: 18ch; min-height: 3em; }
-  .editor__escrito { transition: background-color 0.3s, color 0.3s; border-radius: 6px; }
-  .seleccion .editor__escrito { background: color-mix(in srgb, var(--acento) 22%, transparent); text-decoration: line-through; text-decoration-color: var(--acento); text-decoration-thickness: 0.06em; color: var(--texto-suave); }
-  .editor__caret { display: inline-block; width: 0.06em; height: 0.85em; margin-left: 0.04em; background: var(--acento); vertical-align: -0.05em; animation: parpadeo 1s steps(1) infinite; }
-  .listo .editor__caret { animation-duration: 1.2s; }
+  .caret { display: inline-block; width: 0.07em; height: 0.82em; margin-left: 0.05em; background: var(--acento); vertical-align: -0.04em; animation: parpadeo 1.05s steps(1) infinite; }
   @keyframes parpadeo { 50% { opacity: 0; } }
-  .editor__nota { position: absolute; right: clamp(1rem, 4vw, 3rem); top: clamp(3.5rem, 8vw, 5rem); font-size: 0.875rem; font-weight: 500; padding: 0.45rem 0.85rem; border-radius: 999px; background: var(--texto); color: var(--fondo); opacity: 0; transform: translateY(8px) scale(0.95); transition: opacity 0.4s var(--ease), transform 0.4s var(--ease); }
-  .editor__nota.visible { opacity: 1; transform: none; }
-  .editor__repetir { position: absolute; right: 1.25rem; bottom: 1.25rem; font: inherit; font-size: 0.875rem; padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto); cursor: pointer; }
-  .editor__repetir:hover { border-color: var(--texto); }
+  @keyframes entrar { from { opacity: 0; transform: translateY(8px); } }
+  .repetir { position: absolute; right: 1.25rem; bottom: 1.25rem; z-index: 3; font: inherit; font-size: 0.875rem; padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto); cursor: pointer; }
+  .repetir:hover { border-color: var(--texto); }
 
-  /* 02 */
-  .lente { --lx: 30%; --ly: 50%; cursor: none; }
-  .lente__capa { position: absolute; inset: 0; padding: clamp(1.5rem, 5vw, 4rem); display: flex; align-items: center; }
-  .lente__texto { display: block; max-width: 18ch; }
-  .lente__capa--borrosa { filter: blur(clamp(6px, 1vw, 12px)); opacity: 0.55; user-select: none; }
-  .lente__capa--nitida {
-    -webkit-mask-image: radial-gradient(circle clamp(90px, 14vw, 190px) at var(--lx) var(--ly), #000 60%, transparent 100%);
-    mask-image: radial-gradient(circle clamp(90px, 14vw, 190px) at var(--lx) var(--ly), #000 60%, transparent 100%);
+  /* ---------- 01 ---------- */
+  .rw { --salud: 0.32; display: grid; gap: 1.25rem; align-items: stretch; padding: clamp(0.75rem, 2vw, 1.25rem); background: radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--acento) 14%, transparent), transparent 55%), var(--superficie); }
+  .rw__editor { display: flex; flex-direction: column; border-radius: calc(var(--radio) - 6px); background: var(--tarjeta); border: 1px solid var(--borde); box-shadow: 0 30px 60px -40px rgb(0 0 0 / 0.35); }
+  .rw__barra { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; border-bottom: 1px solid var(--borde); font-size: 0.8125rem; color: var(--texto-suave); }
+  .rw__pestana--activa { color: var(--texto); font-weight: 500; }
+  .rw__pestana--activa::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--acento); margin-right: 0.5rem; }
+  .rw__estado { font-variant-numeric: tabular-nums; transition: color 0.4s; }
+  .rw--listo .rw__estado { color: #18794e; }
+  .rw__texto { flex: 1; display: flex; flex-wrap: wrap; align-content: center; column-gap: 0.25em; padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3.5rem) clamp(2rem, 4vw, 3.5rem); font-family: var(--display); font-weight: 600; font-size: clamp(2rem, 5vw, 4.5rem); line-height: 1.12; letter-spacing: -0.045em; }
+  .rw__tramo { position: relative; border-radius: 6px; transition: background-color 0.4s var(--ease), color 0.4s; }
+  .rw__tramo--marcado .rw__contenido { text-decoration: underline wavy color-mix(in srgb, var(--acento) 85%, transparent); text-decoration-thickness: 0.04em; text-underline-offset: 0.18em; text-decoration-skip-ink: none; }
+  .rw__tramo--activo { background: color-mix(in srgb, var(--acento) 13%, transparent); box-shadow: 0 0 0 0.1em color-mix(in srgb, var(--acento) 13%, transparent); }
+  .rw__tramo--acento:not(.rw__tramo--marcado) { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--acento); }
+  .rw__tramo--hecho { animation: destello 1s var(--ease); }
+  @keyframes destello { 0% { background: color-mix(in srgb, #30a46c 28%, transparent); } 100% { background: transparent; } }
+  .rw__sugerencia {
+    position: absolute; left: 0; bottom: calc(100% + 0.6rem); z-index: 2;
+    font-family: var(--sans); font-size: 0.8125rem; font-weight: 400; letter-spacing: 0; line-height: 1.3; white-space: nowrap; font-style: normal;
+    padding: 0.5rem 0.75rem; border-radius: 10px; background: var(--texto); color: var(--fondo);
+    box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.4);
+    opacity: 0; transform: translateY(6px); transition: opacity 0.3s, transform 0.4s var(--ease); pointer-events: none;
   }
-  .lente__aro {
-    position: absolute; left: var(--lx); top: var(--ly); width: clamp(180px, 28vw, 380px); aspect-ratio: 1;
-    border-radius: 50%; border: 1px solid color-mix(in srgb, var(--acento) 55%, transparent);
-    transform: translate(-50%, -50%); pointer-events: none;
-  }
-  .lente__aro span { position: absolute; left: 50%; bottom: -0.9rem; transform: translateX(-50%); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acento-texto); background: var(--superficie); padding: 0 0.5rem; }
-  .lente--estatica .lente__capa--borrosa, .lente--estatica .lente__aro { display: none; }
-  .lente--estatica .lente__capa--nitida { mask-image: none; -webkit-mask-image: none; }
+  .rw__sugerencia::after { content: ''; position: absolute; left: 1rem; top: 100%; border: 6px solid transparent; border-top-color: var(--texto); }
+  .rw__sugerencia b { color: var(--acento); font-weight: 600; }
+  .rw__tramo--activo.rw__tramo--marcado .rw__sugerencia { opacity: 1; transform: none; }
+  .rw__caret { display: inline-block; width: 0.06em; height: 0.85em; margin-left: 0.03em; background: var(--acento); align-self: center; animation: parpadeo 1.05s steps(1) infinite; }
+  .rw__tramo .rw__caret { vertical-align: -0.06em; }
 
-  /* 03 */
-  .micro { --mx: 0; --my: 0; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
+  .rw__panel { display: flex; flex-direction: column; gap: 1.25rem; padding: 1.25rem; border-radius: calc(var(--radio) - 6px); background: var(--tarjeta); border: 1px solid var(--borde); font-size: 0.875rem; }
+  .rw__panel-titulo { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texto-suave); }
+  .rw__fila { display: flex; justify-content: space-between; align-items: baseline; }
+  .rw__metrica b { font-family: var(--display); font-size: 2rem; font-weight: 600; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .rw__barra-progreso { height: 6px; border-radius: 6px; background: var(--superficie); margin-top: 0.5rem; overflow: hidden; }
+  .rw__barra-progreso span { display: block; height: 100%; width: 32%; border-radius: inherit; background: linear-gradient(90deg, var(--acento), #30a46c); background-size: 300% 100%; background-position: calc((1 - var(--salud)) * 100%) 0; transition: width 0.8s var(--ease), background-position 0.8s; }
+  .rw__metrica--doble { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .rw__metrica--doble div { padding: 0.75rem; border-radius: 10px; background: var(--superficie); display: flex; flex-direction: column; }
+  .rw__metrica--doble span { color: var(--texto-suave); font-size: 0.8125rem; }
+  .rw__metrica--doble b { font-size: 1.5rem; }
+  .rw__log { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .rw__log :global(li) { display: grid; gap: 0.1rem; padding: 0.55rem 0.7rem; border-radius: 10px; border: 1px solid var(--borde); animation: entrar 0.5s var(--ease); }
+  .rw__log :global(s) { color: var(--texto-suave); text-decoration-color: var(--acento); }
+  .rw__log :global(span) { font-weight: 500; }
+  .rw__log :global(span)::before { content: '→ '; color: #30a46c; }
+  @media (min-width: 60rem) { .rw { grid-template-columns: 1fr 17rem; } }
+  @media (max-width: 59.99rem) {
+    .rw { padding-bottom: 4rem; }
+    .rw__log, .rw__panel-titulo { display: none; }
+    .rw__panel { flex-direction: row; flex-wrap: wrap; align-items: center; }
+    .rw__panel > * { flex: 1 1 12rem; }
+    .rw__sugerencia { font-size: 0.75rem; }
+  }
+
+  /* ---------- 02 ---------- */
+  .micro { --mx: 0; --my: 0; display: flex; align-items: center; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
   .micro__titular { position: relative; z-index: 1; max-width: 16ch; }
-  .rota { position: relative; display: inline-block; height: 1.1em; vertical-align: bottom; overflow: hidden; transition: width 0.6s var(--ease); text-align: left; }
-  .rota em { position: absolute; left: 0; top: 0; white-space: nowrap; transform: translateY(110%); opacity: 0; transition: transform 0.7s var(--ease), opacity 0.5s; }
-  .rota em.activa { transform: none; opacity: 1; position: relative; }
-  .rota em.sale { transform: translateY(-110%); opacity: 0; }
+  .micro__tecleo { white-space: nowrap; }
   .chip {
     position: absolute; left: var(--x); top: var(--y); z-index: 2;
     font: inherit; font-size: clamp(0.75rem, 1.4vw, 0.9375rem); font-weight: 500; white-space: nowrap;
@@ -327,15 +459,44 @@ const titularTono = 'Diseño las palabras que hacen que un producto se entienda.
   :root[data-theme='dark'] .chip--error { color: #ff8b8f; } :root[data-theme='dark'] .chip--exito { color: #4cc38a; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .chip--error { color: #ff8b8f; } :root:not([data-theme='light']) .chip--exito { color: #4cc38a; } }
   @keyframes flotar { 50% { transform: translateY(-8px); } }
-  @media (max-width: 40rem) { .chip--vacio, .chip--tooltip { display: none; } .chip { padding: 0.45rem 0.75rem; } }
+  @media (max-width: 40rem) { .chip--vacio, .chip--tooltip { display: none; } .chip { padding: 0.45rem 0.75rem; } .chip--der { left: auto; right: 4%; } }
 
-  /* 04 */
-  .tono { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2.5rem; }
-  .tono__titular { font-weight: 300; max-width: 17ch; }
-  .tono__palabra { display: inline-block; white-space: nowrap; margin-right: 0.25em; }
-  .tono__palabra--acento { color: var(--acento); }
-  .tono__letra { display: inline-block; font-variation-settings: 'wght' 300; }
-  .tono__escala { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; color: var(--texto-suave); }
-  .tono__escala::before { content: ''; order: 1; width: 8rem; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--borde), var(--acento)); }
-  .tono__escala span:last-child { order: 2; }
+  /* ---------- 03 ---------- */
+  .conv { display: grid; gap: 2rem; align-items: center; }
+  .conv__titular { max-width: 12ch; min-height: 3.1em; }
+  .conv__chat { display: flex; flex-direction: column; height: 26rem; border-radius: 28px; background: var(--tarjeta); border: 1px solid var(--borde); box-shadow: 0 40px 80px -40px rgb(0 0 0 / 0.4); overflow: hidden; }
+  .conv__cabecera { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--borde); font-size: 0.9375rem; }
+  .conv__cabecera small { display: block; font-size: 0.75rem; color: var(--texto-suave); }
+  .conv__avatar { width: 2.25rem; height: 2.25rem; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffb199, var(--acento)); }
+  .conv__mensajes { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.6rem; padding: 1.25rem; overflow: hidden; }
+  .conv__mensajes :global(.burbuja) { margin: 0; max-width: 82%; padding: 0.7rem 1rem; border-radius: 18px; font-size: 0.9375rem; line-height: 1.4; animation: entrar 0.45s var(--ease); }
+  .conv__mensajes :global(.burbuja--persona) { align-self: flex-end; background: var(--texto); color: var(--fondo); border-bottom-right-radius: 6px; }
+  .conv__mensajes :global(.burbuja--interfaz) { align-self: flex-start; background: var(--superficie); border-bottom-left-radius: 6px; }
+  .conv__mensajes :global(.puntos) { display: inline-flex; gap: 4px; }
+  .conv__mensajes :global(.puntos i) { width: 7px; height: 7px; border-radius: 50%; background: var(--texto-suave); animation: rebote 1s infinite; }
+  .conv__mensajes :global(.puntos i:nth-child(2)) { animation-delay: 0.15s; } .conv__mensajes :global(.puntos i:nth-child(3)) { animation-delay: 0.3s; }
+  @keyframes rebote { 0%, 60%, 100% { transform: none; opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+  @media (min-width: 60rem) { .conv { grid-template-columns: 1.3fr 1fr; } }
+
+  /* ---------- 04 ---------- */
+  .tec { display: flex; flex-direction: column; justify-content: space-between; gap: 2.5rem; }
+  .tec__titular { max-width: 17ch; min-height: 2.1em; }
+  .tec__teclado { display: grid; gap: clamp(4px, 0.7vw, 8px); width: 100%; max-width: 46rem; margin-inline: auto; padding: clamp(8px, 1.2vw, 14px); border-radius: 18px; background: var(--tarjeta); border: 1px solid var(--borde); box-shadow: 0 30px 60px -40px rgb(0 0 0 / 0.4); }
+  .tec__fila { display: flex; justify-content: center; gap: clamp(4px, 0.7vw, 8px); }
+  .tecla {
+    flex: 0 1 3.4rem; aspect-ratio: 1; display: grid; place-items: center;
+    font-family: var(--sans); font-size: clamp(0.7rem, 1.6vw, 1rem); color: var(--texto-suave);
+    border-radius: clamp(6px, 1vw, 10px); background: var(--fondo); border: 1px solid var(--borde);
+    box-shadow: 0 3px 0 var(--borde); user-select: none; cursor: pointer;
+  }
+  .tecla--espacio { flex: 0 1 22rem; aspect-ratio: auto; height: clamp(2rem, 4.5vw, 3.2rem); font-size: 0.8125rem; }
+  .tecla--pulsada { animation: pulsar 0.55s var(--ease); }
+  @keyframes pulsar {
+    0% { transform: translateY(3px); box-shadow: 0 0 0 var(--borde); background: var(--acento); color: var(--sobre-acento); border-color: var(--acento); }
+    100% { transform: none; }
+  }
+  .tec__pista { margin-top: -1.25rem !important; text-align: center; font-size: 0.875rem; color: var(--texto-suave); opacity: 0; transition: opacity 0.6s; }
+  .tec--libre .tec__pista { opacity: 1; }
+  .tec__pista--oculta { opacity: 0 !important; }
+  @media (hover: none) { .tec__pista { display: none; } }
 </style>

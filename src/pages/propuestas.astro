@@ -2,14 +2,6 @@
 // Página temporal para elegir el hero. No está enlazada ni se indexa.
 import Base from '../layouts/Base.astro';
 
-const chips = [
-  { tipo: 'boton', antes: 'Submit', despues: 'Crear mi cuenta →', x: 8, y: 14, prof: 0.6 },
-  { tipo: 'error', antes: 'Error 422: invalid input', despues: 'Revisa el formato del correo', x: 68, y: 8, prof: 1 },
-  { tipo: 'exito', antes: 'Operation successful', despues: '✓ Guardamos tus cambios', x: 74, y: 74, prof: 0.8 },
-  { tipo: 'tooltip', antes: 'Click here for more info', despues: '¿Para qué pedimos esto?', x: 4, y: 78, prof: 1.2 },
-  { tipo: 'vacio', antes: 'No data', despues: 'Aún no tienes casos. Crea el primero', x: 40, y: 88, prof: 0.5 },
-];
-
 // Reescritura: cada tramo de jerga tiene su reemplazo y el motivo del cambio.
 const tramos = [
   { antes: 'Implementamos soluciones', despues: 'Diseño las palabras', motivo: 'Verbo vacío', sugerencia: 'Di qué haces' },
@@ -79,16 +71,10 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
         <span class="cab__num">02</span>
         <div>
           <h2>Microcopy vivo <span class="cab__tag">v2</span></h2>
-          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, confiar, convertir—. Alrededor flotan piezas de interfaz; al pasar el cursor por cada una ves el «antes» genérico frente a tu «después».</p>
+          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, generar confianza, convertir—. Un solo gesto, limpio, que muestra el impacto de tu trabajo.</p>
         </div>
       </header>
       <div class="lienzo micro" data-micro>
-        {chips.map((c) => (
-          <button type="button" class={`chip chip--${c.tipo}${c.x > 50 ? ' chip--der' : ''}`} style={`--x:${c.x}%;--y:${c.y}%;--prof:${c.prof}`} data-chip>
-            <span class="chip__despues">{c.despues}</span>
-            <span class="chip__antes"><s>{c.antes}</s></span>
-          </button>
-        ))}
         <p class="titular micro__titular">
           Diseño las palabras que hacen que un producto <em class="micro__tecleo"><span data-micro-texto>se entienda.</span><span class="caret" aria-hidden="true"></span></em>
         </p>
@@ -142,7 +128,6 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
 
 <script>
   const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const tactil = matchMedia('(hover: none)').matches;
   const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   /** Teclea texto en un elemento; se cancela si cambia el turno. */
@@ -250,18 +235,6 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
     };
     if (!reducir) alVer(micro, ciclo);
 
-    micro.addEventListener('pointermove', (e) => {
-      if (reducir) return;
-      const r = micro.getBoundingClientRect();
-      micro.style.setProperty('--mx', String((e.clientX - r.left) / r.width - 0.5));
-      micro.style.setProperty('--my', String((e.clientY - r.top) / r.height - 0.5));
-    });
-    const chipsEl = [...micro.querySelectorAll<HTMLElement>('[data-chip]')];
-    chipsEl.forEach((c) => c.addEventListener('click', () => c.classList.toggle('chip--antes')));
-    if (tactil && !reducir) {
-      let k = 0;
-      setInterval(() => { chipsEl.forEach((c) => c.classList.remove('chip--antes')); chipsEl[k % chipsEl.length].classList.add('chip--antes'); k++; }, 1800);
-    }
   }
 
   /* ---------- 03 · Conversación ---------- */
@@ -434,32 +407,9 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
   }
 
   /* ---------- 02 ---------- */
-  .micro { --mx: 0; --my: 0; display: flex; align-items: center; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
+  .micro { display: flex; align-items: center; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
   .micro__titular { position: relative; z-index: 1; max-width: 16ch; }
   .micro__tecleo { white-space: nowrap; }
-  .chip {
-    position: absolute; left: var(--x); top: var(--y); z-index: 2;
-    font: inherit; font-size: clamp(0.75rem, 1.4vw, 0.9375rem); font-weight: 500; white-space: nowrap;
-    padding: 0.6rem 1rem; border-radius: 12px; border: 1px solid var(--borde);
-    background: var(--tarjeta); color: var(--texto); cursor: default;
-    box-shadow: 0 18px 40px -22px rgb(0 0 0 / 0.35);
-    translate: calc(var(--mx) * var(--prof) * -40px) calc(var(--my) * var(--prof) * -40px);
-    transition: translate 0.6s var(--ease), transform 0.4s var(--ease);
-    animation: flotar 6s ease-in-out infinite; animation-delay: calc(var(--prof) * -3s);
-    display: grid;
-  }
-  .chip:hover { animation-play-state: paused; z-index: 3; }
-  .chip > span { grid-area: 1 / 1; transition: opacity 0.3s, transform 0.4s var(--ease); }
-  .chip__antes { opacity: 0; transform: translateY(6px); color: var(--texto-suave); }
-  .chip:hover .chip__antes, .chip--antes .chip__antes { opacity: 1; transform: none; }
-  .chip:hover .chip__despues, .chip--antes .chip__despues { opacity: 0; transform: translateY(-6px); }
-  .chip--boton { background: var(--texto); color: var(--fondo); border-color: transparent; border-radius: 999px; }
-  .chip--error { border-color: color-mix(in srgb, #e5484d 55%, transparent); color: #d1343a; }
-  .chip--exito { color: #18794e; border-color: color-mix(in srgb, #30a46c 45%, transparent); }
-  :root[data-theme='dark'] .chip--error { color: #ff8b8f; } :root[data-theme='dark'] .chip--exito { color: #4cc38a; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .chip--error { color: #ff8b8f; } :root:not([data-theme='light']) .chip--exito { color: #4cc38a; } }
-  @keyframes flotar { 50% { transform: translateY(-8px); } }
-  @media (max-width: 40rem) { .chip--vacio, .chip--tooltip { display: none; } .chip { padding: 0.45rem 0.75rem; } .chip--der { left: auto; right: 4%; } }
 
   /* ---------- 03 ---------- */
   .conv { display: grid; gap: 2rem; align-items: center; }

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TarjetaCaso from '../components/TarjetaCaso.astro';
+import HeroParticulas from '../components/HeroParticulas.astro';
 import { url } from '../config';
 
 const casos = (await getCollection('casos', ({ data }) => !data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
@@ -18,11 +19,13 @@ const enfoque = [
 <Base>
   <section class="hero contenedor">
     <p class="eyebrow hero__eyebrow">UX Writer & Content Designer</p>
-    <h1 class="hero__titulo">
-      <span class="linea"><span>Diseño las palabras</span></span>
-      <span class="linea"><span>que hacen que un</span></span>
-      <span class="linea"><span>producto <em>se entienda.</em></span></span>
-    </h1>
+    <HeroParticulas
+      lineas={[
+        [{ texto: 'Diseño las palabras' }],
+        [{ texto: 'que hacen que un' }],
+        [{ texto: 'producto' }, { texto: 'se entienda.', acento: true }],
+      ]}
+    />
     <div class="hero__pie">
       <p>Publicista de formación. Escribo y estructuro contenido de interfaz que reduce la fricción, genera confianza y mueve métricas.</p>
       <div class="hero__acciones">
@@ -68,14 +71,17 @@ const enfoque = [
 </Base>
 
 <style>
-  .hero { padding-block: clamp(4rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem); }
+  .hero { position: relative; padding-block: clamp(4rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem); }
+  /* Retícula de puntos que se desvanece hacia los bordes. */
+  .hero::before {
+    content: ''; position: absolute; inset: 0 calc(50% - 50vw); z-index: -1; pointer-events: none;
+    background-image: radial-gradient(color-mix(in srgb, var(--texto) 16%, transparent) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, #000 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, #000 30%, transparent 75%);
+    animation: aparecer 1.6s var(--ease) both;
+  }
   .hero__eyebrow { animation: aparecer 1s var(--ease) both; }
-  .hero__titulo { font-size: clamp(2.75rem, 9.5vw, 8.25rem); letter-spacing: -0.05em; line-height: 0.98; }
-  .linea { display: block; overflow: hidden; padding-bottom: 0.08em; }
-  .linea > span { display: inline-block; animation: subir 1.1s var(--ease) both; }
-  .linea:nth-child(2) > span { animation-delay: 0.08s; }
-  .linea:nth-child(3) > span { animation-delay: 0.16s; }
-  .hero__titulo em { color: var(--acento); padding-right: 0.05em; }
   .hero__pie {
     display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;
     gap: 2rem; margin-top: clamp(2.5rem, 6vw, 4.5rem);
@@ -83,7 +89,6 @@ const enfoque = [
   }
   .hero__pie p { max-width: 34ch; margin: 0; color: var(--texto-suave); font-size: 1.125rem; }
   .hero__acciones { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-  @keyframes subir { from { transform: translateY(105%); } to { transform: none; } }
   @keyframes aparecer { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
   .cinta { overflow: hidden; border-block: 1px solid var(--borde); padding-block: 1.1rem; }

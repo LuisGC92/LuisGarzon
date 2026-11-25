@@ -1,6 +1,7 @@
 ---
 // Página temporal para elegir el hero. No está enlazada ni se indexa.
 import Base from '../layouts/Base.astro';
+import HeroTecleo from '../components/HeroTecleo.astro';
 
 // Reescritura: cada tramo problemático tiene su reemplazo y el motivo del cambio.
 const tramos = [
@@ -70,16 +71,11 @@ const tramos = [
         <span class="cab__num">02</span>
         <div>
           <h2>Microcopy vivo <span class="cab__tag">v2</span></h2>
-          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, generar confianza, convertir—. Al pasar el cursor, las letras se esparcen y vuelven a su sitio: el texto se desordena y tú lo vuelves a ordenar.</p>
+          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, generar confianza, convertir—. El titular está hecho de puntos: al teclear, los puntos de cada letra salen del cursor de texto; al borrar, caen. Tu cursor los aparta y deja marcas de edición, sobre renglones de cuaderno.</p>
         </div>
       </header>
       <div class="lienzo micro" data-micro>
-        <p class="titular micro__titular" aria-label="Diseño contenido que hace que un producto se entienda.">
-          {'Diseño contenido que hace que un producto'.split(' ').map((w) => (
-            <><span class="palabra" aria-hidden="true">{[...w].map((l) => <span class="letra">{l}</span>)}</span>{' '}</>
-          ))}
-          <em class="micro__tecleo" aria-hidden="true"><span data-micro-texto>{[...'se entienda.'].map((l) => <span class="letra">{l === ' ' ? '\u00a0' : l}</span>)}</span><span class="caret"></span></em>
-        </p>
+        <HeroTecleo base="Diseño contenido que hace que un producto" opciones={['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.']} />
       </div>
     </div>
   </section>
@@ -197,70 +193,6 @@ const tramos = [
     rw.querySelector('[data-rw-repetir]')!.addEventListener('click', correr);
     reiniciar();
     alVer(rw, correr);
-  }
-
-  /* ---------- 02 · Microcopy vivo ---------- */
-  {
-    const micro = document.querySelector<HTMLElement>('[data-micro]')!;
-    const texto = micro.querySelector<HTMLElement>('[data-micro-texto]')!;
-    const opciones = ['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.'];
-    const letra = (c: string) => { const l = document.createElement('span'); l.className = 'letra'; l.textContent = c === ' ' ? '\u00a0' : c; return l; };
-
-    // Tecleo letra a letra: cada carácter es un elemento propio para que pueda moverse.
-    const ciclo = async () => {
-      let i = 0;
-      while (true) {
-        await espera(2400);
-        while (texto.lastChild) { texto.lastChild.remove(); await espera(35); }
-        await espera(250);
-        i = (i + 1) % opciones.length;
-        for (const c of opciones[i]) { texto.append(letra(c)); despertar(); await espera(70 * (0.6 + Math.random() * 0.9) + (c === ' ' ? 50 : 0)); }
-      }
-    };
-
-    // Física: las letras huyen del cursor con un leve giro y vuelven a su sitio con un resorte.
-    type Estado = { x: number; y: number; vx: number; vy: number; r: number };
-    const estados = new WeakMap<HTMLElement, Estado>();
-    const cursor = { x: 0, y: 0, activo: false, rafaga: 0 };
-    let animando = false;
-    const paso = () => {
-      const caja = micro.getBoundingClientRect();
-      const radio = Math.max(110, caja.width * 0.12);
-      let energia = 0, maxDesp = 0;
-      const todas = micro.querySelectorAll<HTMLElement>('.letra');
-      todas.forEach((el) => {
-        let e = estados.get(el);
-        if (!e) { e = { x: 0, y: 0, vx: 0, vy: 0, r: 0 }; estados.set(el, e); }
-        const r = el.getBoundingClientRect();
-        const cx = r.left + r.width / 2 - e.x - caja.left, cy = r.top + r.height / 2 - e.y - caja.top;
-        let fx = -e.x * 0.035, fy = -e.y * 0.035;
-        if (cursor.activo || cursor.rafaga > 0) {
-          const dx = cx + e.x - cursor.x, dy = cy + e.y - cursor.y, d = Math.hypot(dx, dy) || 1;
-          const alcance = cursor.rafaga > 0 ? radio * 1.8 : radio;
-          if (d < alcance) { const f = (1 - d / alcance) * (cursor.rafaga > 0 ? 9 : 4.5); fx += (dx / d) * f; fy += (dy / d) * f; }
-        }
-        e.vx = (e.vx + fx) * 0.86; e.vy = (e.vy + fy) * 0.86;
-        e.x += e.vx; e.y += e.vy; e.r = e.x * 0.25 + e.vy * 1.5;
-        energia += Math.abs(e.vx) + Math.abs(e.vy);
-        maxDesp = Math.max(maxDesp, Math.abs(e.x), Math.abs(e.y));
-        el.style.transform = Math.abs(e.x) + Math.abs(e.y) < 0.05 ? '' : `translate(${e.x.toFixed(1)}px, ${e.y.toFixed(1)}px) rotate(${e.r.toFixed(1)}deg)`;
-      });
-      if (cursor.rafaga > 0) cursor.rafaga--;
-      if (maxDesp < 0.3 && energia < 0.2 && !cursor.activo) {
-        // En reposo, cada letra vuelve exactamente a su posición original.
-        todas.forEach((el) => { el.style.transform = ''; const e = estados.get(el); if (e) { e.x = e.y = e.vx = e.vy = 0; } });
-        animando = false; return;
-      }
-      requestAnimationFrame(paso);
-    };
-    const despertar = () => { if (!animando && !reducir) { animando = true; requestAnimationFrame(paso); } };
-    const posicion = (e: PointerEvent) => { const c = micro.getBoundingClientRect(); cursor.x = e.clientX - c.left; cursor.y = e.clientY - c.top; };
-    micro.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { posicion(e); cursor.activo = true; despertar(); } });
-    micro.addEventListener('pointerleave', () => { cursor.activo = false; });
-    // En pantallas táctiles, un toque esparce las letras alrededor del dedo.
-    micro.addEventListener('pointerdown', (e) => { posicion(e); cursor.rafaga = 6; despertar(); });
-
-    if (!reducir) alVer(micro, ciclo);
   }
 
   /* ---------- 03 · Conversación ---------- */
@@ -403,12 +335,7 @@ const tramos = [
   }
 
   /* ---------- 02 ---------- */
-  .micro { display: flex; align-items: center; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
-  .micro__titular { position: relative; z-index: 1; max-width: 16ch; }
-  .micro__tecleo { white-space: nowrap; }
-  .micro { cursor: default; touch-action: pan-y; user-select: none; }
-  .palabra { display: inline-block; white-space: nowrap; }
-  .letra { display: inline-block; will-change: transform; }
+  .micro { display: flex; align-items: center; min-height: clamp(30rem, 70vh, 42rem); }
 
   /* ---------- 03 ---------- */
   .conv { display: grid; gap: 2rem; align-items: center; }

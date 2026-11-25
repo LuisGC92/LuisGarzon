@@ -1,0 +1,249 @@
+---
+/**
+ * Titular de puntos que se teclea.
+ * - La parte base se ensambla con puntos al cargar.
+ * - La parte final (acento) se borra y se vuelve a teclear: los puntos de cada letra
+ *   salen desde el cursor de texto y, al borrar, caen y se desvanecen.
+ * - El cursor del visitante aparta los puntos y deja una estela de «marcas de edición».
+ * El <h1> real sigue en el DOM (accesibilidad y SEO); el lienzo es decorativo.
+ */
+interface Props {
+  base: string;
+  opciones: string[];
+}
+const { base, opciones } = Astro.props;
+---
+
+<div class="ht" data-ht data-opciones={JSON.stringify(opciones)}>
+  <h1 class="ht__titular">
+    <span class="ht__base">{base.split(' ').map((p) => <><span class="ht__palabra">{p}</span>{' '}</>)}</span>
+    <em class="ht__acento" data-ht-acento>{opciones[0]}</em>
+  </h1>
+  <canvas class="ht__lienzo" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-ht]').forEach((raiz) => { if (!reducir) iniciar(raiz); });
+
+  async function iniciar(raiz: HTMLElement) {
+    const opciones: string[] = JSON.parse(raiz.dataset.opciones || '[]');
+    const h1 = raiz.querySelector<HTMLElement>('.ht__titular')!;
+    const acentoEl = raiz.querySelector<HTMLElement>('[data-ht-acento]')!;
+    const lienzo = raiz.querySelector<HTMLCanvasElement>('.ht__lienzo')!;
+    const ctx = lienzo.getContext('2d')!;
+    await document.fonts.ready;
+
+    // Estado de las partículas (arreglos planos por rendimiento).
+    let n = 0;
+    let hx: Float32Array, hy: Float32Array, px: Float32Array, py: Float32Array, vx: Float32Array, vy: Float32Array;
+    let alfa: Float32Array, calor: Float32Array, rx: Float32Array;
+    let grupo: Int8Array, visible: Uint8Array;
+    let ancho = 0, alto = 0, dpr = 1, tam = 2;
+    let renglones: number[] = [];
+    let colTexto = '#000', colAcento = '#f00', colRenglon = '#ddd';
+    // Geometría de la línea del acento, para el cursor de texto y los prefijos.
+    let acX = 0, acBase = 0, acAsc = 0, acFuente = '', acEsp = 0;
+    let opcion = 0, prefijo = opciones[0].length;
+    const raton = { x: -9999, y: -9999, activo: false };
+    let primera = true, enPantalla = false, corriendo = false;
+
+    const leerColores = () => {
+      const cs = getComputedStyle(document.documentElement);
+      colTexto = cs.getPropertyValue('--texto').trim() || '#000';
+      colAcento = cs.getPropertyValue('--acento').trim() || '#f00';
+      colRenglon = cs.getPropertyValue('--borde').trim() || '#ddd';
+    };
+
+    const anchoPrefijo = (texto: string, k: number) => {
+      const m = document.createElement('canvas').getContext('2d')!;
+      m.font = acFuente; if ('letterSpacing' in m) (m as any).letterSpacing = `${acEsp}px`;
+      return m.measureText(texto.slice(0, k)).width;
+    };
+
+    const muestrear = () => {
+      const r = h1.getBoundingClientRect();
+      const rA = acentoEl.getBoundingClientRect();
+      const csA = getComputedStyle(acentoEl);
+      acFuente = `${csA.fontStyle} ${csA.fontWeight} ${csA.fontSize} ${csA.fontFamily}`;
+      acEsp = parseFloat(csA.letterSpacing) || 0;
+      acX = rA.left - r.left;
+      // El lienzo cubre también la opción más larga del acento, aunque sobresalga del titular.
+      const maxAcento = Math.max(...opciones.map((t) => anchoPrefijo(t, t.length)));
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      ancho = Math.ceil(Math.max(r.width, acX + maxAcento + 24)); alto = Math.ceil(r.height);
+      lienzo.width = ancho * dpr; lienzo.height = alto * dpr;
+      lienzo.style.width = ancho + 'px'; lienzo.style.height = alto + 'px';
+      const fs = parseFloat(getComputedStyle(h1).fontSize);
+      const paso = Math.max(2, Math.round(fs / 30));
+      tam = Math.max(1.4, paso * (fs < 70 ? 0.9 : 0.8));
+
+      const off = document.createElement('canvas'); off.width = ancho; off.height = alto;
+      const o = off.getContext('2d', { willReadFrequently: true })!;
+      o.textBaseline = 'alphabetic';
+      const lineas = new Set<number>();
+      const puntos = (g: number, origenX = 0) => {
+        const d = o.getImageData(0, 0, ancho, alto).data;
+        const res: number[][] = [];
+        for (let y = 0; y < alto; y += paso) for (let x = 0; x < ancho; x += paso) {
+          if (d[(y * ancho + x) * 4 + 3] > 140) res.push([x, y, g, x - origenX]);
+        }
+        o.clearRect(0, 0, ancho, alto);
+        return res;
+      };
+      const dibujar = (el: Element, texto: string, x: number, rr: DOMRect) => {
+        const cs = getComputedStyle(el);
+        o.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        if ('letterSpacing' in o) (o as any).letterSpacing = cs.letterSpacing === 'normal' ? '0px' : cs.letterSpacing;
+        const m = o.measureText('Hg');
+        const y = rr.top - r.top + (rr.height - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent;
+        o.fillStyle = '#000'; o.fillText(texto, x, y);
+        lineas.add(Math.round(y + m.fontBoundingBoxDescent * 0.35));
+        return { y, asc: m.fontBoundingBoxAscent };
+      };
+
+      // Base: cada palabra en su posición real (respeta el ajuste de línea).
+      h1.querySelectorAll('.ht__palabra').forEach((p) => { const rr = p.getBoundingClientRect(); dibujar(p, p.textContent || '', rr.left - r.left, rr); });
+      const todos = puntos(-1);
+      // Acento: se muestrea cada opción en la misma línea.
+      opciones.forEach((t, g) => { const g2 = dibujar(acentoEl, t, acX, rA); acBase = g2.y; acAsc = g2.asc; todos.push(...puntos(g, acX)); });
+      renglones = [...lineas].sort((a, b) => a - b).filter((v, i, a) => i === 0 || v - a[i - 1] > 4);
+
+      n = todos.length;
+      hx = new Float32Array(n); hy = new Float32Array(n); px = new Float32Array(n); py = new Float32Array(n);
+      vx = new Float32Array(n); vy = new Float32Array(n); alfa = new Float32Array(n); calor = new Float32Array(n);
+      rx = new Float32Array(n); grupo = new Int8Array(n); visible = new Uint8Array(n);
+      todos.forEach(([x, y, g, rel], i) => {
+        hx[i] = x; hy[i] = y; grupo[i] = g; rx[i] = rel;
+        if (primera && g === -1) {
+          // Entrada: la base se ensambla desde una nube dispersa.
+          const a = Math.random() * Math.PI * 2, d = 150 + Math.random() * Math.max(ancho, alto) * 0.7;
+          px[i] = x + Math.cos(a) * d; py[i] = y + Math.sin(a) * d * 0.5;
+        } else { px[i] = x; py[i] = y; }
+        if (g === -1) { visible[i] = 1; alfa[i] = 1; }
+      });
+      aplicarPrefijo(primera);
+      primera = false;
+    };
+
+    /** Muestra los puntos del acento hasta el prefijo tecleado; los demás caen. */
+    const aplicarPrefijo = (desdeCursor = true) => {
+      const limite = prefijo > 0 ? anchoPrefijo(opciones[opcion], prefijo) + 0.5 : -1;
+      const cx = acX + Math.max(0, limite);
+      for (let i = 0; i < n; i++) {
+        const g = grupo[i]; if (g === -1) continue;
+        const debe = g === opcion && rx[i] <= limite ? 1 : 0;
+        if (debe && !visible[i]) {
+          visible[i] = 1; alfa[i] = 1;
+          if (desdeCursor) { px[i] = cx + (Math.random() - 0.5) * 6; py[i] = acBase - acAsc * 0.4 + (Math.random() - 0.5) * acAsc * 0.8; vx[i] = vy[i] = 0; }
+          else { px[i] = hx[i]; py[i] = hy[i]; }
+        } else if (!debe && visible[i]) {
+          visible[i] = 0; vx[i] = (Math.random() - 0.5) * 3; vy[i] = -Math.random() * 2.5;
+        }
+      }
+    };
+
+    let t0 = performance.now();
+    const cuadro = (t: number) => {
+      if (!enPantalla) { corriendo = false; return; }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, ancho, alto);
+      // Renglones de cuaderno.
+      ctx.fillStyle = colRenglon;
+      renglones.forEach((y) => ctx.fillRect(0, y, ancho, 1));
+
+      const radio = Math.max(70, ancho * 0.08), radio2 = radio * radio;
+      for (let pase = 0; pase < 2; pase++) {
+        ctx.fillStyle = pase === 0 ? colTexto : colAcento;
+        for (let i = 0; i < n; i++) {
+          if (pase === 0) {
+            if (visible[i]) {
+              let fx = (hx[i] - px[i]) * 0.07, fy = (hy[i] - py[i]) * 0.07;
+              if (raton.activo) {
+                const dx = px[i] - raton.x, dy = py[i] - raton.y, d2 = dx * dx + dy * dy;
+                if (d2 < radio2) {
+                  const d = Math.sqrt(d2) || 1, f = (1 - d / radio);
+                  fx += (dx / d) * f * 5; fy += (dy / d) * f * 5;
+                  calor[i] = Math.min(1, calor[i] + f * 0.3);
+                }
+              }
+              vx[i] = (vx[i] + fx) * 0.8; vy[i] = (vy[i] + fy) * 0.8;
+            } else if (alfa[i] > 0) {
+              vy[i] += 0.35; vx[i] *= 0.98; alfa[i] = Math.max(0, alfa[i] - 0.03);
+            }
+            px[i] += vx[i]; py[i] += vy[i];
+            calor[i] *= 0.975;
+          }
+          if (alfa[i] <= 0.02) continue;
+          // Acento y «calor» se invierten: el cursor marca en naranja la base y en negro el acento.
+          const enAcento = (grupo[i] >= 0) !== (calor[i] > 0.35);
+          if ((pase === 1) !== enAcento) continue;
+          ctx.globalAlpha = alfa[i];
+          ctx.fillRect(px[i], py[i], tam, tam);
+        }
+      }
+      ctx.globalAlpha = 1;
+      // Cursor de texto parpadeante al final del acento.
+      if (Math.floor((t - t0) / 530) % 2 === 0 || escribiendo) {
+        const cx = acX + (prefijo > 0 ? anchoPrefijo(opciones[opcion], prefijo) : 0) + tam * 2;
+        ctx.fillStyle = colAcento;
+        ctx.fillRect(cx, acBase - acAsc * 0.78, Math.max(2, tam * 1.4), acAsc * 0.92);
+      }
+      requestAnimationFrame(cuadro);
+    };
+    const arrancar = () => { if (!corriendo && enPantalla) { corriendo = true; requestAnimationFrame(cuadro); } };
+
+    // Ciclo de tecleo del acento.
+    let escribiendo = false;
+    const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const ciclo = async () => {
+      while (true) {
+        await espera(2600);
+        escribiendo = true;
+        while (prefijo > 0) { prefijo--; acentoEl.textContent = opciones[opcion].slice(0, prefijo); aplicarPrefijo(); await espera(38); }
+        await espera(260);
+        opcion = (opcion + 1) % opciones.length;
+        const t = opciones[opcion];
+        for (let k = 1; k <= t.length; k++) {
+          prefijo = k; acentoEl.textContent = t.slice(0, k); aplicarPrefijo();
+          await espera(75 * (0.6 + Math.random() * 0.9) + (t[k - 1] === ' ' ? 60 : 0));
+        }
+        escribiendo = false; t0 = performance.now();
+      }
+    };
+
+    leerColores();
+    muestrear();
+    raiz.classList.add('ht--activo');
+
+    new IntersectionObserver((e) => { enPantalla = e[0].isIntersecting; arrancar(); }, { threshold: 0.05 }).observe(raiz);
+    let cicloIniciado = false;
+    new IntersectionObserver((e, ob) => { if (e[0].isIntersecting && !cicloIniciado) { cicloIniciado = true; ciclo(); ob.disconnect(); } }, { threshold: 0.4 }).observe(raiz);
+
+    const mover = (x: number, y: number) => { const r = lienzo.getBoundingClientRect(); raton.x = x - r.left; raton.y = y - r.top; raton.activo = true; };
+    raiz.addEventListener('pointermove', (e) => mover(e.clientX, e.clientY));
+    raiz.addEventListener('pointerleave', () => { raton.activo = false; });
+    raiz.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') raton.activo = false; });
+    raiz.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { mover(e.clientX, e.clientY); setTimeout(() => (raton.activo = false), 350); } });
+
+    // Al cambiar de tamaño, se vuelve a muestrear con el ancho mayor del acento para no mover el layout.
+    let tr: number | undefined, primeraMedida = true;
+    new ResizeObserver(() => {
+      // La primera notificación llega al observar: no hay cambio real y se ignora para no cortar la entrada.
+      if (primeraMedida) { primeraMedida = false; return; }
+      clearTimeout(tr); tr = window.setTimeout(() => { const txt = acentoEl.textContent; acentoEl.textContent = opciones[0]; muestrear(); acentoEl.textContent = txt; }, 150); }).observe(raiz);
+    const alTema = () => leerColores();
+    new MutationObserver(alTema).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', alTema);
+  }
+</script>
+
+<style>
+  .ht { position: relative; touch-action: pan-y; }
+  .ht__titular { font-family: var(--display); font-weight: 600; font-size: clamp(2.25rem, 6.6vw, 6rem); line-height: 1.04; letter-spacing: -0.045em; max-width: 19ch; }
+  .ht__palabra { display: inline-block; }
+  .ht__acento { display: block; min-height: 1.04em; white-space: nowrap; font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--acento); }
+  .ht__lienzo { position: absolute; left: 0; top: 0; pointer-events: none; }
+  /* Con el lienzo activo, el texto real se vuelve transparente pero sigue disponible para lectores de pantalla. */
+  .ht--activo .ht__titular, .ht--activo .ht__acento { color: transparent; }
+</style>

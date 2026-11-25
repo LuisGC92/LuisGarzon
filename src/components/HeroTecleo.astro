@@ -7,18 +7,31 @@
  * - El cursor del visitante aparta los puntos y deja una estela de «marcas de edición».
  * El <h1> real sigue en el DOM (accesibilidad y SEO); el lienzo es decorativo.
  * Sin JavaScript o con «reducir movimiento», se muestra el texto normal.
+ * - Opcional: un interruptor (switch) de interfaz alterna una palabra del titular.
  * El tamaño se ajusta con la variable CSS --ht-tam desde la página que lo usa.
  */
 interface Props {
   base: string;
+  alternancia?: [string, string];
   opciones: string[];
 }
-const { base, opciones } = Astro.props;
+const { base, alternancia, opciones } = Astro.props;
 ---
 
 <div class="ht" data-ht data-opciones={JSON.stringify(opciones)}>
   <h1 class="ht__titular">
     <span class="ht__base">{base.split(' ').map((p) => <><span class="ht__palabra">{p}</span>{' '}</>)}</span>
+    {alternancia && (
+      <button type="button" class="ht__switch" role="switch" aria-checked="false" aria-label={`Alternar entre ${alternancia[0]} y ${alternancia[1]}`} data-ht-switch>
+        <span class="ht__pista" aria-hidden="true"><span class="ht__perilla"></span></span>
+        <span class="ht__rodillo">
+          <span class="ht__rodillo-in">
+            <span data-ht-alt="0">{alternancia[0]}</span>
+            <span data-ht-alt="1" aria-hidden="true">{alternancia[1]}</span>
+          </span>
+        </span>
+      </button>
+    )}
     <em class="ht__acento" data-ht-acento>{opciones[0]}</em>
   </h1>
   <canvas class="ht__lienzo" aria-hidden="true"></canvas>
@@ -26,11 +39,28 @@ const { base, opciones } = Astro.props;
 
 <script>
   const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.querySelectorAll<HTMLElement>('[data-ht]').forEach((raiz) => { if (!reducir) iniciar(raiz); });
+  document.querySelectorAll<HTMLElement>('[data-ht]').forEach((raiz) => {
+    const alternar = prepararSwitch(raiz);
+    if (!reducir) iniciar(raiz, alternar);
+  });
+
+  /** Interruptor de interfaz que alterna una palabra del titular. Funciona también sin animación. */
+  function prepararSwitch(raiz: HTMLElement) {
+    const sw = raiz.querySelector<HTMLButtonElement>('[data-ht-switch]');
+    if (!sw) return null;
+    const palabras = [...sw.querySelectorAll<HTMLElement>('[data-ht-alt]')];
+    const alternar = () => {
+      const activo = sw.getAttribute('aria-checked') !== 'true';
+      sw.setAttribute('aria-checked', String(activo));
+      palabras.forEach((p, i) => p.toggleAttribute('aria-hidden', i !== (activo ? 1 : 0)));
+    };
+    sw.addEventListener('click', alternar);
+    return alternar;
+  }
 
   const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  async function iniciar(raiz: HTMLElement) {
+  async function iniciar(raiz: HTMLElement, alternar: (() => void) | null) {
     const opciones: string[] = JSON.parse(raiz.dataset.opciones || '[]');
     if (!opciones.length) return;
     const h1 = raiz.querySelector<HTMLElement>('.ht__titular')!;
@@ -226,6 +256,8 @@ const { base, opciones } = Astro.props;
     const ciclo = async () => {
       while (true) {
         await espera(2600);
+        // Primero cambia el interruptor; después se reescribe el final del titular.
+        if (alternar) { alternar(); await espera(750); }
         escribiendo = true;
         while (prefijo > 0) { prefijo--; acentoEl.textContent = opciones[opcion].slice(0, prefijo); aplicarPrefijo(); await espera(38); }
         await espera(260);
@@ -284,6 +316,35 @@ const { base, opciones } = Astro.props;
   .ht__palabra { display: inline-block; }
   .ht__acento { display: block; min-height: 1.04em; white-space: nowrap; font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--acento); }
   .ht__lienzo { position: absolute; left: 0; top: 0; pointer-events: none; }
+
+  /* Interruptor dentro del titular: un componente real de interfaz, en texto sólido. */
+  .ht__switch {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 0.16em;
+    margin: 0.02em 0; padding: 0.06em 0.24em 0.06em 0.1em; vertical-align: -0.04em;
+    font: inherit; letter-spacing: inherit; line-height: 1; color: var(--texto);
+    background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 999px;
+    box-shadow: 0 0.12em 0.3em -0.16em rgb(0 0 0 / 0.25);
+    cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .ht__switch:hover { border-color: var(--texto-suave); }
+  .ht__pista {
+    position: relative; flex: 0 0 auto; width: 0.82em; height: 0.48em; border-radius: 999px;
+    background: var(--borde); transition: background-color 0.4s var(--ease);
+  }
+  .ht__perilla {
+    position: absolute; top: 0.05em; left: 0.05em; width: 0.38em; height: 0.38em; border-radius: 50%;
+    background: #fff; box-shadow: 0 0.03em 0.08em rgb(0 0 0 / 0.3);
+    transition: transform 0.45s var(--ease);
+  }
+  .ht__switch[aria-checked='true'] .ht__pista { background: var(--acento); }
+  .ht__switch[aria-checked='true'] .ht__perilla { transform: translateX(0.34em); }
+  /* Las filas son más altas que la ventana para que los trazos descendentes no asomen al rodar. */
+  .ht__rodillo { display: inline-block; height: 1.12em; overflow: hidden; }
+  .ht__rodillo-in { display: grid; transition: transform 0.6s var(--ease); }
+  .ht__rodillo-in > span { display: block; height: 1.4em; line-height: 1.12; }
+  .ht__switch[aria-checked='true'] .ht__rodillo-in { transform: translateY(-1.4em); }
   /* Con el lienzo activo, el texto real se vuelve transparente pero sigue disponible para lectores de pantalla. */
   .ht--activo .ht__titular, .ht--activo .ht__acento { color: transparent; }
+  .ht--activo .ht__switch { color: var(--texto); }
 </style>

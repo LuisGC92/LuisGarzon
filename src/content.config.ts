@@ -22,7 +22,7 @@ const casos = defineCollection({
     rol: z.string(),
     alcance: z.string(),
     equipo: z.string().optional(),
-    sitio: z.object({ texto: z.string(), url: z.string().url() }).optional(),
+    sitio: z.object({ texto: z.string(), url: z.url() }).optional(),
     // Titular de la sección de resultados; admite *cursiva* para el acento en serif.
     resultadosTitulo: z.string().default('Resultados'),
     resultados: z.array(z.object({ valor: z.string(), texto: z.string() })).default([]),

@@ -144,12 +144,12 @@ const anio = new Date().getFullYear();
     box-shadow: 0 1px 0 var(--borde);
   }
   .cabecera__fila { display: flex; align-items: center; gap: 1rem; height: 4.5rem; }
-  .marca { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; margin-right: auto; }
+  .marca { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; margin-right: auto; white-space: nowrap; }
   .marca__punto { width: 10px; height: 10px; border-radius: 50%; background: var(--acento); transition: transform 0.5s var(--ease); }
   .marca:hover .marca__punto { transform: scale(1.6); }
   nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
   nav a {
-    display: block; padding: 0.45rem 0.85rem; border-radius: 999px;
+    display: block; white-space: nowrap; padding: 0.45rem 0.85rem; border-radius: 999px;
     font-size: 0.9375rem; color: var(--texto-suave);
     transition: color 0.3s, background-color 0.3s;
   }
@@ -162,6 +162,7 @@ const anio = new Date().getFullYear();
   .tema:hover { transform: rotate(180deg); border-color: var(--texto); }
   @media (max-width: 30rem) {
     nav a { padding-inline: 0.55rem; font-size: 0.875rem; }
+    .cabecera__fila { gap: 0.5rem; }
     .nav__contacto { display: none !important; }
   }
 

@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TarjetaCaso from '../components/TarjetaCaso.astro';
-import HeroParticulas from '../components/HeroParticulas.astro';
+import HeroTecleo from '../components/HeroTecleo.astro';
 import { url } from '../config';
 
 const casos = (await getCollection('casos', ({ data }) => !data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
@@ -19,12 +19,9 @@ const enfoque = [
 <Base>
   <section class="hero contenedor">
     <p class="eyebrow hero__eyebrow">UX Writer & Content Designer</p>
-    <HeroParticulas
-      lineas={[
-        [{ texto: 'Diseño las palabras' }],
-        [{ texto: 'que hacen que un' }],
-        [{ texto: 'producto' }, { texto: 'se entienda.', acento: true }],
-      ]}
+    <HeroTecleo
+      base="Diseño contenido que hace que un producto"
+      opciones={['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.']}
     />
     <div class="hero__pie">
       <p>Publicista de formación. Escribo y estructuro contenido de interfaz que reduce la fricción, genera confianza y mueve métricas.</p>
@@ -71,16 +68,7 @@ const enfoque = [
 </Base>
 
 <style>
-  .hero { position: relative; padding-block: clamp(4rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem); }
-  /* Retícula de puntos que se desvanece hacia los bordes. */
-  .hero::before {
-    content: ''; position: absolute; inset: 0 calc(50% - 50vw); z-index: -1; pointer-events: none;
-    background-image: radial-gradient(color-mix(in srgb, var(--texto) 16%, transparent) 1px, transparent 1.2px);
-    background-size: 22px 22px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, #000 30%, transparent 75%);
-    mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, #000 30%, transparent 75%);
-    animation: aparecer 1.6s var(--ease) both;
-  }
+  .hero { position: relative; padding-block: clamp(4rem, 12vw, 9rem) clamp(3rem, 8vw, 6rem); --ht-tam: clamp(2.5rem, 7.6vw, 7.25rem); }
   .hero__eyebrow { animation: aparecer 1s var(--ease) both; }
   .hero__pie {
     display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end;

@@ -9,7 +9,9 @@ const base = '/LuisGarzon';
 /** Antepone `base` a las rutas absolutas de imágenes y enlaces escritos en Markdown. */
 function rehypeBase() {
   const prefix = base.replace(/\/$/, '');
+  /** @param {unknown} v */
   const fix = (v) => (typeof v === 'string' && v.startsWith('/') && !v.startsWith('//') && !v.startsWith(prefix + '/') ? prefix + v : v);
+  /** @param {any} node Nodo del árbol HTML (hast). */
   const walk = (node) => {
     if (node.type === 'element' && node.properties) {
       if ('src' in node.properties) node.properties.src = fix(node.properties.src);
@@ -17,11 +19,11 @@ function rehypeBase() {
     }
     // El HTML escrito dentro del Markdown llega como texto sin procesar.
     if (node.type === 'raw' && typeof node.value === 'string') {
-      node.value = node.value.replace(/\b(src|href)="(\/[^"]*)"/g, (_, attr, v) => `${attr}="${fix(v)}"`);
+      node.value = node.value.replace(/\b(src|href)="(\/[^"]*)"/g, (/** @type {string} */ _, /** @type {string} */ attr, /** @type {string} */ v) => `${attr}="${fix(v)}"`);
     }
     (node.children || []).forEach(walk);
   };
-  return (tree) => walk(tree);
+  return (/** @type {any} */ tree) => walk(tree);
 }
 
 export default defineConfig({

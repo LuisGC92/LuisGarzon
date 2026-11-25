@@ -18,7 +18,7 @@ const tituloCompleto = titulo ? `${titulo} · ${perfil.nombre}` : `${perfil.nomb
 const ruta = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
 const nav = [
   { texto: 'Casos', href: url('/#casos') },
-  { texto: 'Sobre mí', href: url('/sobre-mi'), activo: ruta.startsWith('/sobre-mi') },
+  { texto: 'Conóceme', href: url('/sobre-mi'), activo: ruta.startsWith('/sobre-mi') },
 ];
 const contacto = perfil.email ? `mailto:${perfil.email}` : perfil.linkedin;
 const anio = new Date().getFullYear();
@@ -164,6 +164,10 @@ const anio = new Date().getFullYear();
     nav a { padding-inline: 0.55rem; font-size: 0.875rem; }
     .cabecera__fila { gap: 0.5rem; }
     .nav__contacto { display: none !important; }
+  }
+  @media (max-width: 22.5rem) {
+    nav a { padding-inline: 0.4rem; font-size: 0.8125rem; }
+    .tema { width: 2.2rem; height: 2.2rem; }
   }
 
   .pie { margin-top: clamp(6rem, 14vw, 10rem); padding-block: clamp(4rem, 8vw, 6rem) 2rem; border-top: 1px solid var(--borde); }

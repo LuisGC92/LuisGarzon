@@ -8,16 +8,17 @@
 import { url } from '../config';
 
 // `escala` equilibra el peso visual entre logos de proporciones distintas.
+// `oscuro`: versión para fondo oscuro (solo los negros pasan a blanco; los colores de marca no cambian).
 const marcas = [
-  { nombre: 'Mercado Libre', archivo: 'mercado-libre.webp', escala: 1 },
-  { nombre: 'Mercado Pago', archivo: 'mercado-pago.png', escala: 1 },
-  { nombre: 'Mercedes-Benz', archivo: 'mercedes.svg', escala: 1.35 },
+  { nombre: 'Mercado Libre', archivo: 'mercado-libre.webp', escala: 1, oscuro: 'mercado-libre-oscuro.png' },
+  { nombre: 'Mercado Pago', archivo: 'mercado-pago.png', escala: 1, oscuro: 'mercado-pago-oscuro.png' },
+  { nombre: 'Mercedes-Benz', archivo: 'mercedes.svg', escala: 1.35, oscuro: 'mercedes-oscuro.svg' },
   { nombre: 'Freightliner', archivo: 'freightliner.svg', escala: 0.85 },
-  { nombre: 'FUSO', archivo: 'fuso.svg', escala: 0.72 },
-  { nombre: 'DiDi', archivo: 'didi.svg', escala: 0.8 },
+  { nombre: 'FUSO', archivo: 'fuso.svg', escala: 0.72, oscuro: 'fuso-oscuro.svg' },
+  { nombre: 'DiDi', archivo: 'didi.svg', escala: 0.8, oscuro: 'didi-oscuro.svg' },
   { nombre: 'Itaú', archivo: 'itau.svg', escala: 1.15 },
   { nombre: 'Colsubsidio', archivo: 'colsubsidio.svg', escala: 0.8 },
-  { nombre: 'Cámara de Comercio de Bogotá', archivo: 'ccb.svg', escala: 1.15 },
+  { nombre: 'Cámara de Comercio de Bogotá', archivo: 'ccb.svg', escala: 1.15, oscuro: 'ccb-oscuro.svg' },
 ];
 ---
 
@@ -33,7 +34,8 @@ const marcas = [
         <ul class="marcas__lista" aria-hidden={copia === 1 ? 'true' : undefined}>
           {marcas.map((m) => (
             <li class="marca-logo" tabindex={copia === 0 ? 0 : -1} style={`--escala:${m.escala}`}>
-              <img src={url(`/marcas/${m.archivo}`)} alt={copia === 0 ? m.nombre : ''} loading="lazy" decoding="async" draggable="false" />
+              <img class:list={['marca-logo__img', { 'marca-logo__img--claro': m.oscuro }]} src={url(`/marcas/${m.archivo}`)} alt={copia === 0 ? m.nombre : ''} loading="lazy" decoding="async" draggable="false" />
+              {m.oscuro && <img class="marca-logo__img marca-logo__img--oscuro" src={url(`/marcas/${m.oscuro}`)} alt="" loading="lazy" decoding="async" draggable="false" />}
             </li>
           ))}
         </ul>
@@ -77,27 +79,33 @@ const marcas = [
   .marcas__carril:hover .marcas__pista,
   .marcas__carril:focus-within .marcas__pista,
   .marcas__carril--pausado .marcas__pista { animation-play-state: paused; }
-  .marcas__lista { display: flex; gap: clamp(0.75rem, 2vw, 1.25rem); list-style: none; margin: 0; padding: 0 clamp(0.375rem, 1vw, 0.625rem); }
+  .marcas__lista { display: flex; gap: clamp(1.5rem, 4vw, 3.5rem); list-style: none; margin: 0; padding: 0 clamp(0.75rem, 2vw, 1.75rem); }
   @keyframes desplazar { to { transform: translateX(-50%); } }
 
+  /* Sin contenedor visible: la caja solo da un área común para que los logos se alineen. */
   .marca-logo {
     flex: 0 0 auto; display: grid; place-items: center;
-    width: clamp(10rem, 22vw, 14rem); height: clamp(5.5rem, 11vw, 7.5rem);
-    border-radius: var(--radio); background: var(--tarjeta-logo, #fff); border: 1px solid var(--borde);
-    cursor: pointer; outline-offset: -2px;
+    width: clamp(8.5rem, 17vw, 11.5rem); height: clamp(4.5rem, 8vw, 6rem);
+    border-radius: 12px; cursor: pointer; outline-offset: 2px;
   }
   /* Caja fija con object-fit: cada logo, SVG o imagen, se ajusta sin recortarse. */
-  .marca-logo img {
-    width: 72%; height: calc(40% * var(--escala)); min-width: 0; min-height: 0; object-fit: contain;
+  .marca-logo__img {
+    grid-area: 1 / 1;
+    width: 86%; height: calc(46% * var(--escala)); min-width: 0; min-height: 0; object-fit: contain;
     filter: grayscale(1) contrast(1.15); opacity: 0.72;
     transition: filter 0.45s var(--ease), opacity 0.45s var(--ease), transform 0.45s var(--ease);
     user-select: none;
   }
-  .marca-logo:hover img, .marca-logo:focus-visible img, .marca-logo--activo img { filter: none; opacity: 1; transform: scale(1.04); }
+  .marca-logo:hover .marca-logo__img, .marca-logo:focus-visible .marca-logo__img, .marca-logo--activo .marca-logo__img { filter: none; opacity: 1; transform: scale(1.04); }
 
-  /* En modo oscuro, las fichas se mantienen claras para respetar los colores de cada marca. */
-  :global(:root[data-theme='dark']) .marca-logo { --tarjeta-logo: #ecebe6; border-color: transparent; }
-  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .marca-logo { --tarjeta-logo: #ecebe6; border-color: transparent; } }
+  /* Versión para fondo oscuro: se muestra según el tema activo. */
+  .marca-logo__img--oscuro { display: none; }
+  :global(:root[data-theme='dark']) .marca-logo__img--claro { display: none; }
+  :global(:root[data-theme='dark']) .marca-logo__img--oscuro { display: block; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .marca-logo__img--claro { display: none; }
+    :global(:root:not([data-theme='light'])) .marca-logo__img--oscuro { display: block; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .marcas__pista { animation: none; width: auto; justify-content: center; }

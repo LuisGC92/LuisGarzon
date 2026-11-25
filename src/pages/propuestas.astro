@@ -4,19 +4,18 @@ import Base from '../layouts/Base.astro';
 
 // Reescritura: cada tramo de jerga tiene su reemplazo y el motivo del cambio.
 const tramos = [
-  { antes: 'Implementamos soluciones', despues: 'Diseño las palabras', motivo: 'Verbo vacío', sugerencia: 'Di qué haces' },
-  { antes: 'de interacción orientadas a optimizar', despues: 'que hacen que un producto', motivo: 'Jerga', sugerencia: 'Habla del producto' },
+  { antes: 'Implementamos soluciones', despues: 'Diseño contenido', motivo: 'Verbo vacío', sugerencia: 'Di qué haces' },
+  { antes: 'de interacción orientadas a optimizar', despues: 'que hace que un producto', motivo: 'Jerga', sugerencia: 'Habla del producto' },
   { antes: 'la experiencia.', despues: 'se entienda.', motivo: 'Abstracto', sugerencia: 'Nombra el resultado', acento: true },
 ];
 
-const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
 ---
 
 <Base titulo="Propuestas de hero" noindex>
   <section class="contenedor intro">
-    <p class="eyebrow">Exploración · Hero de la portada · Ronda 2</p>
-    <h1>Cuatro propuestas que <em>se escriben</em></h1>
-    <p class="intro__texto">Todas parten de tu oficio: el texto se teclea, se corrige y se reescribe delante del visitante. Pruébalas con el cursor y el teclado; en el móvil se animan solas.</p>
+    <p class="eyebrow">Exploración · Hero de la portada · Ronda 3</p>
+    <h1>Cuatro caminos para el <em>hero</em></h1>
+    <p class="intro__texto">Todas parten de tu oficio: el contenido se escribe, se corrige y resuelve un problema delante del visitante. En el móvil se animan solas.</p>
   </section>
 
   <!-- 01 · Reescritura en vivo (v2) -->
@@ -35,7 +34,7 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
             <span class="rw__pestana rw__pestana--activa">titular.txt</span>
             <span class="rw__estado" data-rw-estado>Revisando…</span>
           </div>
-          <p class="rw__texto" aria-label="Diseño las palabras que hacen que un producto se entienda.">
+          <p class="rw__texto" aria-label="Diseño contenido que hace que un producto se entienda.">
             {tramos.map((t, i) => (
               <>
                 <span class={`rw__tramo${t.acento ? ' rw__tramo--acento' : ''}`} data-tramo={i} data-antes={t.antes} data-despues={t.despues} aria-hidden="true">
@@ -55,7 +54,7 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
           </div>
           <div class="rw__metrica rw__metrica--doble">
             <div><span>Jerga</span><b data-rw-jerga>3</b></div>
-            <div><span>Palabras</span><b data-rw-palabras>11</b></div>
+            <div><span>Términos vagos</span><b data-rw-palabras>2</b></div>
           </div>
           <ol class="rw__log" data-rw-log></ol>
         </aside>
@@ -76,7 +75,7 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
       </header>
       <div class="lienzo micro" data-micro>
         <p class="titular micro__titular">
-          Diseño las palabras que hacen que un producto <em class="micro__tecleo"><span data-micro-texto>se entienda.</span><span class="caret" aria-hidden="true"></span></em>
+          Diseño contenido que hace que un producto <em class="micro__tecleo"><span data-micro-texto>se entienda.</span><span class="caret" aria-hidden="true"></span></em>
         </p>
       </div>
     </div>
@@ -89,38 +88,63 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
         <span class="cab__num">03</span>
         <div>
           <h2>Conversación</h2>
-          <p><strong>Concepto:</strong> el titular se teclea a la izquierda mientras, a la derecha, una interfaz responde dudas reales de usuarios. El indicador de «escribiendo…» y las respuestas tecleadas demuestran que escribes para conversar, no para rellenar pantallas.</p>
+          <p><strong>Concepto:</strong> un caso puntual de servicio resuelto con contenido. Una persona no pudo completar su compra y no sabe si le cobraron; la interfaz le responde qué pasó, qué no pasó y qué hacer ahora, hasta que la compra se concreta.</p>
         </div>
       </header>
       <div class="lienzo conv" data-conv>
         <p class="titular conv__titular"><span data-conv-titular></span><em data-conv-acento></em><span class="caret" aria-hidden="true"></span></p>
         <div class="conv__chat" aria-hidden="true">
-          <div class="conv__cabecera"><span class="conv__avatar"></span><div><b>Asistente</b><small data-conv-estado>en línea</small></div></div>
+          <div class="conv__cabecera"><span class="conv__avatar"></span><div><b>Ayuda · Tienda en línea</b><small data-conv-estado>en línea</small></div></div>
           <div class="conv__mensajes" data-conv-mensajes></div>
         </div>
+        <p class="conv__caso" aria-hidden="true">Caso: pago rechazado en el checkout</p>
       </div>
     </div>
   </section>
 
-  <!-- 04 · Teclado -->
-  <section class="propuesta" id="p4">
+  <!-- 05 · Del problema al impacto -->
+  <section class="propuesta" id="p5">
     <div class="contenedor">
       <header class="cab">
-        <span class="cab__num">04</span>
+        <span class="cab__num">05</span>
         <div>
-          <h2>Teclado</h2>
-          <p><strong>Concepto:</strong> el titular se teclea y cada letra hunde su tecla en un teclado minimalista. Al terminar, el teclado responde a lo que escribe el visitante: una invitación lúdica a «escribir contigo».</p>
+          <h2>Del problema al impacto <span class="cab__tag">nueva</span></h2>
+          <p><strong>Concepto:</strong> un solo componente de interfaz recorre tu proceso completo. Primero se ve la fricción (UX), luego reescribes el contenido, después cobra forma en la interfaz (UI) y al final aparece el impacto en el negocio. Es el portafolio resumido en una animación.</p>
         </div>
       </header>
-      <div class="lienzo tec" data-tec>
-        <p class="titular tec__titular"><span data-tec-titular></span><em data-tec-acento></em><span class="caret" aria-hidden="true"></span></p>
-        <div class="tec__teclado" aria-hidden="true">
-          {filas.map((f) => (
-            <div class="tec__fila">{[...f].map((k) => <span class="tecla" data-k={k}>{k}</span>)}</div>
-          ))}
-          <div class="tec__fila"><span class="tecla tecla--espacio" data-k=" ">espacio</span></div>
+      <div class="lienzo imp" data-imp>
+        <div class="imp__lado">
+          <p class="titular imp__titular">Diseño contenido que hace que un producto <em>se entienda.</em></p>
+          <ol class="imp__pasos">
+            <li><button type="button" data-ir="0"><span class="imp__etq">UX</span>Detecto la fricción<i></i></button></li>
+            <li><button type="button" data-ir="1"><span class="imp__etq">Contenido</span>Escribo la solución<i></i></button></li>
+            <li><button type="button" data-ir="2"><span class="imp__etq">UI</span>La llevo a la interfaz<i></i></button></li>
+            <li><button type="button" data-ir="3"><span class="imp__etq">Impacto</span>Muevo el indicador<i></i></button></li>
+          </ol>
         </div>
-        <p class="tec__pista" data-tec-pista>Ahora escribe tú: el teclado te sigue.</p>
+        <div class="imp__escena" aria-hidden="true">
+          <div class="imp__movil">
+            <p class="imp__appbar"><span>‹</span> Ajustes de fotos</p>
+            <div class="imp__fila">
+              <span class="imp__icono">☁</span>
+              <div class="imp__textos">
+                <b data-imp-titulo>Sincronización inteligente</b>
+                <small data-imp-ayuda>Optimiza la gestión de contenidos multimedia.</small>
+              </div>
+              <span class="imp__switch"><span></span></span>
+            </div>
+            <div class="imp__zona">
+            <p class="imp__duda">«¿Esto qué hace? ¿Gasta mis datos?»</p>
+            <ul class="imp__principios"><li>Qué hace</li><li>Qué no hace</li><li>Cuándo</li></ul>
+            <p class="imp__toast">✓ Listo. Tus fotos se guardarán con wifi.</p>
+            </div>
+            <div class="imp__kpis">
+              <div><span>Activación de la función</span><b class="sube">↑</b><i><s style="--v:0.78"></s></i></div>
+              <div><span>Consultas a soporte</span><b class="baja">↓</b><i><s style="--v:0.3"></s></i></div>
+              <small>Indicadores a medir tras el lanzamiento</small>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -162,7 +186,7 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
     const jerga = rw.querySelector<HTMLElement>('[data-rw-jerga]')!;
     const palabras = rw.querySelector<HTMLElement>('[data-rw-palabras]')!;
     const log = rw.querySelector<HTMLElement>('[data-rw-log]')!;
-    const pasos = [{ c: 32, j: 3, p: 11 }, { c: 58, j: 2, p: 10 }, { c: 79, j: 1, p: 9 }, { c: 96, j: 0, p: 9 }];
+    const pasos = [{ c: 32, j: 3, p: 2 }, { c: 58, j: 2, p: 2 }, { c: 79, j: 1, p: 1 }, { c: 96, j: 0, p: 0 }];
     let turno = 0;
 
     const contar = (el: HTMLElement, hasta: number) => {
@@ -181,7 +205,7 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
         t.querySelector('.rw__contenido')!.textContent = t.dataset.antes!;
       });
       log.innerHTML = ''; estado.textContent = 'Revisando…'; rw.classList.remove('rw--listo');
-      claridad.textContent = '32'; jerga.textContent = '3'; palabras.textContent = '11'; metricas(0);
+      claridad.textContent = '32'; jerga.textContent = '3'; palabras.textContent = '2'; metricas(0);
       tramos[tramos.length - 1].after(caret);
     };
     const correr = async () => {
@@ -245,17 +269,17 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
     const mensajes = conv.querySelector<HTMLElement>('[data-conv-mensajes]')!;
     const estado = conv.querySelector<HTMLElement>('[data-conv-estado]')!;
     const dialogo = [
-      { de: 'persona', texto: 'Me sale un error y no sé qué hice mal' },
-      { de: 'interfaz', texto: 'A tu correo le falta la @. Corrígelo y vuelve a intentarlo.' },
-      { de: 'persona', texto: '¿Es seguro contar mi historia aquí?' },
-      { de: 'interfaz', texto: 'Sí. Solo tu especialista leerá tus respuestas, y no afectan tu proceso.' },
-      { de: 'persona', texto: 'Gracias, ahora sí entiendo' },
+      { de: 'persona', texto: 'Intenté pagar y me salió «Transacción rechazada». ¿Me cobraron?' },
+      { de: 'interfaz', texto: 'No te cobramos nada. Tu banco bloqueó el pago como medida de seguridad.' },
+      { de: 'interfaz', texto: 'Puedes aprobarlo desde la app de tu banco o pagar con otra tarjeta. Tu carrito sigue guardado.' },
+      { de: 'persona', texto: 'Listo, ya lo aprobé en la app' },
+      { de: 'interfaz', texto: 'Perfecto. Tu pedido está confirmado y llega el jueves.' },
     ];
     const burbuja = (de: string) => {
       const b = document.createElement('p'); b.className = `burbuja burbuja--${de}`;
       mensajes.append(b);
       // Solo se conservan los últimos mensajes para que el chat no crezca sin fin.
-      while (mensajes.children.length > 4) mensajes.firstElementChild!.remove();
+      while (mensajes.children.length > 3) mensajes.firstElementChild!.remove();
       return b;
     };
     const chat = async () => {
@@ -281,47 +305,57 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
     };
     const iniciar = async () => {
       if (reducir) {
-        titular.textContent = 'Diseño las palabras que hacen que un producto '; acento.textContent = 'se entienda.';
-        dialogo.slice(0, 4).forEach((m) => { burbuja(m.de).textContent = m.texto; });
+        titular.textContent = 'Diseño contenido que hace que un producto '; acento.textContent = 'se entienda.';
+        dialogo.slice(0, 3).forEach((m) => { burbuja(m.de).textContent = m.texto; });
         return;
       }
       chat();
       await espera(500);
-      await teclear(titular, 'Diseño las palabras que hacen que un producto ', 55, () => true);
+      await teclear(titular, 'Diseño contenido que hace que un producto ', 55, () => true);
       await teclear(acento, 'se entienda.', 85, () => true);
     };
     alVer(conv, iniciar);
   }
 
-  /* ---------- 04 · Teclado ---------- */
+  /* ---------- 05 · Del problema al impacto ---------- */
   {
-    const tec = document.querySelector<HTMLElement>('[data-tec]')!;
-    const titular = tec.querySelector<HTMLElement>('[data-tec-titular]')!;
-    const acento = tec.querySelector<HTMLElement>('[data-tec-acento]')!;
-    const pista = tec.querySelector<HTMLElement>('[data-tec-pista]')!;
-    const teclas = new Map([...tec.querySelectorAll<HTMLElement>('[data-k]')].map((k) => [k.dataset.k!, k]));
-    const pulsar = (c: string) => {
-      const min = c.toLowerCase();
-      const base = min === 'ñ' ? 'ñ' : min.normalize('NFD').replace(/[̀-ͯ]/g, '');
-      const k = teclas.get(base); if (!k) return;
-      k.classList.remove('tecla--pulsada'); void k.offsetWidth; k.classList.add('tecla--pulsada');
+    const imp = document.querySelector<HTMLElement>('[data-imp]')!;
+    const titulo = imp.querySelector<HTMLElement>('[data-imp-titulo]')!;
+    const ayuda = imp.querySelector<HTMLElement>('[data-imp-ayuda]')!;
+    const botones = [...imp.querySelectorAll<HTMLButtonElement>('[data-ir]')];
+    const antes = { t: 'Sincronización inteligente', a: 'Optimiza la gestión de contenidos multimedia.' };
+    const despues = { t: 'Guardar fotos con wifi', a: 'Se guardan solas al conectarte a wifi. No usan tus datos móviles.' };
+    const duracion = [3200, 5200, 3200, 4600];
+    let turno = 0;
+
+    const pintar = (n: number) => {
+      for (let k = 0; k < 4; k++) imp.classList.toggle(`imp--e${k}`, n >= k);
+      imp.dataset.estado = String(n);
+      botones.forEach((b, k) => {
+        b.classList.toggle('activo', k === n); b.classList.toggle('hecho', k < n);
+        b.style.setProperty('--dur', `${duracion[k]}ms`);
+      });
     };
-    const iniciar = async () => {
-      if (reducir) { titular.textContent = 'Diseño las palabras que hacen que un producto '; acento.textContent = 'se entienda.'; tec.classList.add('tec--libre'); return; }
-      await espera(500);
-      await teclear(titular, 'Diseño las palabras que hacen que un producto ', 70, () => true, pulsar);
-      await teclear(acento, 'se entienda.', 95, () => true, pulsar);
-      tec.classList.add('tec--libre');
+    const ir = async (n: number, animar: boolean) => {
+      const id = ++turno; const vivo = () => id === turno;
+      pintar(n);
+      if (n === 0) { titulo.textContent = antes.t; ayuda.textContent = antes.a; }
+      else if (n === 1 && animar) {
+        titulo.textContent = antes.t; ayuda.textContent = antes.a;
+        await espera(500);
+        if (!(await borrar(titulo, 25, vivo))) return;
+        if (!(await teclear(titulo, despues.t, 60, vivo))) return;
+        if (!(await borrar(ayuda, 12, vivo))) return;
+        if (!(await teclear(ayuda, despues.a, 30, vivo))) return;
+      } else { titulo.textContent = despues.t; ayuda.textContent = despues.a; }
+      if (reducir) return;
+      const restante = n === 1 && animar ? 1400 : duracion[n];
+      await espera(restante);
+      if (vivo()) ir((n + 1) % 4, true);
     };
-    alVer(tec, iniciar);
-    // Cuando el titular está escrito, el teclado responde a las teclas del visitante.
-    addEventListener('keydown', (e) => {
-      if (!tec.classList.contains('tec--libre') || e.metaKey || e.ctrlKey || e.altKey) return;
-      const r = tec.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight) return;
-      if (e.key.length === 1) { pulsar(e.key); pista.classList.add('tec__pista--oculta'); }
-    });
-    tec.querySelectorAll<HTMLElement>('[data-k]').forEach((k) => k.addEventListener('pointerdown', () => pulsar(k.dataset.k!)));
+    botones.forEach((b) => b.addEventListener('click', () => ir(Number(b.dataset.ir), true)));
+    if (reducir) { pintar(3); titulo.textContent = despues.t; ayuda.textContent = despues.a; }
+    else { pintar(0); alVer(imp, () => ir(0, true)); }
   }
 </script>
 
@@ -426,27 +460,73 @@ const filas = ['qwertyuiop', 'asdfghjklñ', 'zxcvbnm,.'];
   .conv__mensajes :global(.puntos i) { width: 7px; height: 7px; border-radius: 50%; background: var(--texto-suave); animation: rebote 1s infinite; }
   .conv__mensajes :global(.puntos i:nth-child(2)) { animation-delay: 0.15s; } .conv__mensajes :global(.puntos i:nth-child(3)) { animation-delay: 0.3s; }
   @keyframes rebote { 0%, 60%, 100% { transform: none; opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .conv__caso { position: absolute; left: clamp(1.25rem, 5vw, 4rem); bottom: 1.25rem; font-size: 0.8125rem; color: var(--texto-suave); }
+  .conv__caso::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--acento); margin-right: 0.5rem; vertical-align: 0.15em; }
   @media (min-width: 60rem) { .conv { grid-template-columns: 1.3fr 1fr; } }
+  @media (max-width: 59.99rem) { .conv { padding-bottom: 3.5rem; } }
 
-  /* ---------- 04 ---------- */
-  .tec { display: flex; flex-direction: column; justify-content: space-between; gap: 2.5rem; }
-  .tec__titular { max-width: 17ch; min-height: 2.1em; }
-  .tec__teclado { display: grid; gap: clamp(4px, 0.7vw, 8px); width: 100%; max-width: 46rem; margin-inline: auto; padding: clamp(8px, 1.2vw, 14px); border-radius: 18px; background: var(--tarjeta); border: 1px solid var(--borde); box-shadow: 0 30px 60px -40px rgb(0 0 0 / 0.4); }
-  .tec__fila { display: flex; justify-content: center; gap: clamp(4px, 0.7vw, 8px); }
-  .tecla {
-    flex: 0 1 3.4rem; aspect-ratio: 1; display: grid; place-items: center;
-    font-family: var(--sans); font-size: clamp(0.7rem, 1.6vw, 1rem); color: var(--texto-suave);
-    border-radius: clamp(6px, 1vw, 10px); background: var(--fondo); border: 1px solid var(--borde);
-    box-shadow: 0 3px 0 var(--borde); user-select: none; cursor: pointer;
+  /* ---------- 05 ---------- */
+  .imp { display: grid; gap: 2.5rem; align-items: center; }
+  .imp__titular { max-width: 13ch; }
+  .imp__pasos { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 0.25rem; max-width: 26rem; }
+  .imp__pasos button {
+    position: relative; width: 100%; display: flex; align-items: baseline; gap: 0.75rem; overflow: hidden;
+    padding: 0.7rem 0.25rem; border: 0; border-bottom: 1px solid var(--borde); background: none;
+    font: inherit; font-size: 0.9375rem; color: var(--texto-suave); text-align: left; cursor: pointer; transition: color 0.4s;
   }
-  .tecla--espacio { flex: 0 1 22rem; aspect-ratio: auto; height: clamp(2rem, 4.5vw, 3.2rem); font-size: 0.8125rem; }
-  .tecla--pulsada { animation: pulsar 0.55s var(--ease); }
-  @keyframes pulsar {
-    0% { transform: translateY(3px); box-shadow: 0 0 0 var(--borde); background: var(--acento); color: var(--sobre-acento); border-color: var(--acento); }
-    100% { transform: none; }
+  .imp__etq { flex: 0 0 5.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .imp__pasos i { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: var(--acento); transform: scaleX(0); transform-origin: left; }
+  .imp__pasos .activo { color: var(--texto); }
+  .imp__pasos .activo .imp__etq { color: var(--acento-texto); }
+  .imp__pasos .activo i { animation: llenar var(--dur) linear forwards; }
+  .imp__pasos .hecho { color: var(--texto); }
+  .imp__pasos .hecho i { transform: scaleX(1); background: var(--texto); opacity: 0.25; }
+  @keyframes llenar { to { transform: scaleX(1); } }
+
+  .imp__escena { display: grid; place-items: center; }
+  .imp__movil {
+    position: relative; width: min(100%, 22rem); min-height: 27rem; padding: 1.25rem;
+    border-radius: 32px; background: var(--tarjeta); border: 1px solid var(--borde);
+    box-shadow: 0 40px 80px -40px rgb(0 0 0 / 0.4);
   }
-  .tec__pista { margin-top: -1.25rem !important; text-align: center; font-size: 0.875rem; color: var(--texto-suave); opacity: 0; transition: opacity 0.6s; }
-  .tec--libre .tec__pista { opacity: 1; }
-  .tec__pista--oculta { opacity: 0 !important; }
-  @media (hover: none) { .tec__pista { display: none; } }
+  .imp__appbar { font-size: 0.9375rem; font-weight: 600; margin: 0.25rem 0 1.25rem !important; }
+  .imp__appbar span { color: var(--texto-suave); margin-right: 0.35rem; }
+  .imp__fila { display: flex; align-items: center; gap: 0.85rem; padding: 1rem; border-radius: 16px; background: var(--superficie); transition: background-color 0.5s, box-shadow 0.5s; }
+  .imp__icono { flex: 0 0 auto; display: grid; place-items: center; width: 0; height: 2.4rem; overflow: hidden; border-radius: 12px; background: var(--acento-suave); color: var(--acento-texto); opacity: 0; transition: width 0.5s var(--ease), opacity 0.4s; }
+  .imp__textos { flex: 1; display: grid; gap: 0.2rem; min-height: 4.2rem; align-content: center; }
+  .imp__textos b { font-size: 0.9375rem; font-weight: 600; }
+  .imp__textos small { font-size: 0.8125rem; line-height: 1.35; color: var(--texto-suave); }
+  .imp__switch { flex: 0 0 auto; width: 2.6rem; height: 1.5rem; border-radius: 999px; background: var(--borde); position: relative; transition: background-color 0.4s; }
+  .imp__switch span { position: absolute; top: 3px; left: 3px; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.25); transition: transform 0.4s var(--ease); }
+
+  .imp__zona { display: grid; margin-top: 1rem; }
+  .imp__zona > * { grid-area: 1 / 1; align-self: start; }
+  .imp__kpis { position: absolute; left: 1.25rem; right: 1.25rem; }
+  .imp__duda, .imp__principios, .imp__toast, .imp__kpis { opacity: 0; transform: translateY(10px); transition: opacity 0.45s, transform 0.5s var(--ease); pointer-events: none; }
+  .imp__duda { font-family: var(--serif); font-style: italic; font-size: 1.375rem; line-height: 1.2; color: var(--texto-suave); }
+  .imp__principios { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
+  .imp__principios li { font-size: 0.75rem; font-weight: 500; padding: 0.3rem 0.65rem; border-radius: 999px; border: 1px dashed var(--acento); color: var(--acento-texto); }
+  .imp__toast { padding: 0.8rem 1rem; border-radius: 14px; background: var(--texto); color: var(--fondo); font-size: 0.875rem; }
+  .imp__kpis { bottom: 1.25rem; display: grid; gap: 0.75rem; padding: 1rem; border-radius: 16px; background: var(--superficie); }
+  .imp__kpis div { display: grid; grid-template-columns: 1fr auto; gap: 0.35rem 0.5rem; align-items: center; font-size: 0.8125rem; }
+  .imp__kpis b { font-size: 1.125rem; line-height: 1; }
+  .imp__kpis .sube { color: #18794e; } .imp__kpis .baja { color: var(--acento-texto); }
+  .imp__kpis i { grid-column: 1 / -1; height: 6px; border-radius: 6px; background: var(--borde); overflow: hidden; }
+  .imp__kpis s { display: block; height: 100%; width: calc(var(--v) * 100%); border-radius: inherit; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease) 0.2s; }
+  .imp__kpis div:nth-child(1) s { color: #30a46c; } .imp__kpis div:nth-child(2) s { color: var(--acento); }
+  .imp__kpis small { font-size: 0.6875rem; color: var(--texto-suave); }
+
+  /* Estados: 0 fricción · 1 contenido · 2 interfaz · 3 impacto */
+  .imp[data-estado='0'] .imp__duda { opacity: 1; transform: none; }
+  .imp[data-estado='0'] .imp__textos > * { text-decoration: underline wavy color-mix(in srgb, var(--acento) 80%, transparent); text-underline-offset: 0.25em; text-decoration-thickness: 1px; }
+  .imp[data-estado='1'] .imp__principios { opacity: 1; transform: none; }
+  .imp[data-estado='1'] .imp__fila { box-shadow: 0 0 0 2px color-mix(in srgb, var(--acento) 35%, transparent); }
+  .imp--e2 .imp__icono { width: 2.4rem; opacity: 1; }
+  .imp--e2 .imp__fila { background: var(--tarjeta); box-shadow: 0 0 0 1px var(--borde), 0 14px 30px -18px rgb(0 0 0 / 0.3); }
+  .imp--e2 .imp__switch { background: #30a46c; }
+  .imp--e2 .imp__switch span { transform: translateX(1.1rem); }
+  .imp--e2 .imp__toast { opacity: 1; transform: none; }
+  .imp--e3 .imp__kpis { opacity: 1; transform: none; }
+  .imp--e3 .imp__kpis s { transform: scaleX(1); }
+  @media (min-width: 60rem) { .imp { grid-template-columns: 1.15fr 1fr; } }
 </style>

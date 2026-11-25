@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TarjetaCaso from '../components/TarjetaCaso.astro';
 import HeroTecleo from '../components/HeroTecleo.astro';
+import Marcas from '../components/Marcas.astro';
 import { url } from '../config';
 
 const casos = (await getCollection('casos', ({ data }) => !data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
@@ -65,6 +66,8 @@ const enfoque = [
       ))}
     </ol>
   </section>
+
+  <Marcas />
 </Base>
 
 <style>

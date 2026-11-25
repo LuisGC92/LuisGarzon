@@ -2,10 +2,10 @@
 // Página temporal para elegir el hero. No está enlazada ni se indexa.
 import Base from '../layouts/Base.astro';
 
-// Reescritura: cada tramo de jerga tiene su reemplazo y el motivo del cambio.
+// Reescritura: cada tramo problemático tiene su reemplazo y el motivo del cambio.
 const tramos = [
   { antes: 'Implementamos soluciones', despues: 'Diseño contenido', motivo: 'Verbo vacío', sugerencia: 'Di qué haces' },
-  { antes: 'de interacción orientadas a optimizar', despues: 'que hace que un producto', motivo: 'Jerga', sugerencia: 'Habla del producto' },
+  { antes: 'de interacción orientadas a optimizar', despues: 'que hace que un producto', motivo: 'Tecnicismo', sugerencia: 'Habla del producto' },
   { antes: 'la experiencia.', despues: 'se entienda.', motivo: 'Abstracto', sugerencia: 'Nombra el resultado', acento: true },
 ];
 
@@ -13,8 +13,8 @@ const tramos = [
 
 <Base titulo="Propuestas de hero" noindex>
   <section class="contenedor intro">
-    <p class="eyebrow">Exploración · Hero de la portada · Ronda 3</p>
-    <h1>Cuatro caminos para el <em>hero</em></h1>
+    <p class="eyebrow">Exploración · Hero de la portada · Ronda 4</p>
+    <h1>Tres caminos para el <em>hero</em></h1>
     <p class="intro__texto">Todas parten de tu oficio: el contenido se escribe, se corrige y resuelve un problema delante del visitante. En el móvil se animan solas.</p>
   </section>
 
@@ -25,7 +25,7 @@ const tramos = [
         <span class="cab__num">01</span>
         <div>
           <h2>Reescritura en vivo <span class="cab__tag">v2</span></h2>
-          <p><strong>Concepto:</strong> un editor detecta la jerga como lo haría un corrector —con subrayado ondulado y una sugerencia— y la reescribe tramo a tramo. Un panel lateral muestra cómo mejora la claridad en cada cambio: el racional, visible.</p>
+          <p><strong>Concepto:</strong> un editor detecta el lenguaje corporativo como lo haría un corrector —con subrayado ondulado y una sugerencia— y la reescribe tramo a tramo. Un panel lateral muestra cómo mejora la claridad en cada cambio: el racional, visible.</p>
         </div>
       </header>
       <div class="lienzo rw" data-rw>
@@ -53,7 +53,7 @@ const tramos = [
             <div class="rw__barra-progreso"><span data-rw-barra></span></div>
           </div>
           <div class="rw__metrica rw__metrica--doble">
-            <div><span>Jerga</span><b data-rw-jerga>3</b></div>
+            <div><span>Tecnicismos</span><b data-rw-jerga>3</b></div>
             <div><span>Términos vagos</span><b data-rw-palabras>2</b></div>
           </div>
           <ol class="rw__log" data-rw-log></ol>
@@ -70,12 +70,15 @@ const tramos = [
         <span class="cab__num">02</span>
         <div>
           <h2>Microcopy vivo <span class="cab__tag">v2</span></h2>
-          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, generar confianza, convertir—. Un solo gesto, limpio, que muestra el impacto de tu trabajo.</p>
+          <p><strong>Concepto:</strong> el final del titular se borra y se vuelve a teclear con cada objetivo que cumples —entender, generar confianza, convertir—. Al pasar el cursor, las letras se esparcen y vuelven a su sitio: el texto se desordena y tú lo vuelves a ordenar.</p>
         </div>
       </header>
       <div class="lienzo micro" data-micro>
-        <p class="titular micro__titular">
-          Diseño contenido que hace que un producto <em class="micro__tecleo"><span data-micro-texto>se entienda.</span><span class="caret" aria-hidden="true"></span></em>
+        <p class="titular micro__titular" aria-label="Diseño contenido que hace que un producto se entienda.">
+          {'Diseño contenido que hace que un producto'.split(' ').map((w) => (
+            <><span class="palabra" aria-hidden="true">{[...w].map((l) => <span class="letra">{l}</span>)}</span>{' '}</>
+          ))}
+          <em class="micro__tecleo" aria-hidden="true"><span data-micro-texto>{[...'se entienda.'].map((l) => <span class="letra">{l === ' ' ? '\u00a0' : l}</span>)}</span><span class="caret"></span></em>
         </p>
       </div>
     </div>
@@ -102,52 +105,6 @@ const tramos = [
     </div>
   </section>
 
-  <!-- 05 · Del problema al impacto -->
-  <section class="propuesta" id="p5">
-    <div class="contenedor">
-      <header class="cab">
-        <span class="cab__num">05</span>
-        <div>
-          <h2>Del problema al impacto <span class="cab__tag">nueva</span></h2>
-          <p><strong>Concepto:</strong> un solo componente de interfaz recorre tu proceso completo. Primero se ve la fricción (UX), luego reescribes el contenido, después cobra forma en la interfaz (UI) y al final aparece el impacto en el negocio. Es el portafolio resumido en una animación.</p>
-        </div>
-      </header>
-      <div class="lienzo imp" data-imp>
-        <div class="imp__lado">
-          <p class="titular imp__titular">Diseño contenido que hace que un producto <em>se entienda.</em></p>
-          <ol class="imp__pasos">
-            <li><button type="button" data-ir="0"><span class="imp__etq">UX</span>Detecto la fricción<i></i></button></li>
-            <li><button type="button" data-ir="1"><span class="imp__etq">Contenido</span>Escribo la solución<i></i></button></li>
-            <li><button type="button" data-ir="2"><span class="imp__etq">UI</span>La llevo a la interfaz<i></i></button></li>
-            <li><button type="button" data-ir="3"><span class="imp__etq">Impacto</span>Muevo el indicador<i></i></button></li>
-          </ol>
-        </div>
-        <div class="imp__escena" aria-hidden="true">
-          <div class="imp__movil">
-            <p class="imp__appbar"><span>‹</span> Ajustes de fotos</p>
-            <div class="imp__fila">
-              <span class="imp__icono">☁</span>
-              <div class="imp__textos">
-                <b data-imp-titulo>Sincronización inteligente</b>
-                <small data-imp-ayuda>Optimiza la gestión de contenidos multimedia.</small>
-              </div>
-              <span class="imp__switch"><span></span></span>
-            </div>
-            <div class="imp__zona">
-            <p class="imp__duda">«¿Esto qué hace? ¿Gasta mis datos?»</p>
-            <ul class="imp__principios"><li>Qué hace</li><li>Qué no hace</li><li>Cuándo</li></ul>
-            <p class="imp__toast">✓ Listo. Tus fotos se guardarán con wifi.</p>
-            </div>
-            <div class="imp__kpis">
-              <div><span>Activación de la función</span><b class="sube">↑</b><i><s style="--v:0.78"></s></i></div>
-              <div><span>Consultas a soporte</span><b class="baja">↓</b><i><s style="--v:0.3"></s></i></div>
-              <small>Indicadores a medir tras el lanzamiento</small>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 </Base>
 
 <script>
@@ -247,18 +204,63 @@ const tramos = [
     const micro = document.querySelector<HTMLElement>('[data-micro]')!;
     const texto = micro.querySelector<HTMLElement>('[data-micro-texto]')!;
     const opciones = ['se entienda.', 'genere confianza.', 'convierta.', 'se sienta humano.'];
+    const letra = (c: string) => { const l = document.createElement('span'); l.className = 'letra'; l.textContent = c === ' ' ? '\u00a0' : c; return l; };
+
+    // Tecleo letra a letra: cada carácter es un elemento propio para que pueda moverse.
     const ciclo = async () => {
       let i = 0;
       while (true) {
-        await espera(2200);
-        await borrar(texto, 35, () => true);
+        await espera(2400);
+        while (texto.lastChild) { texto.lastChild.remove(); await espera(35); }
         await espera(250);
         i = (i + 1) % opciones.length;
-        await teclear(texto, opciones[i], 70, () => true);
+        for (const c of opciones[i]) { texto.append(letra(c)); despertar(); await espera(70 * (0.6 + Math.random() * 0.9) + (c === ' ' ? 50 : 0)); }
       }
     };
-    if (!reducir) alVer(micro, ciclo);
 
+    // Física: las letras huyen del cursor con un leve giro y vuelven a su sitio con un resorte.
+    type Estado = { x: number; y: number; vx: number; vy: number; r: number };
+    const estados = new WeakMap<HTMLElement, Estado>();
+    const cursor = { x: 0, y: 0, activo: false, rafaga: 0 };
+    let animando = false;
+    const paso = () => {
+      const caja = micro.getBoundingClientRect();
+      const radio = Math.max(110, caja.width * 0.12);
+      let energia = 0, maxDesp = 0;
+      const todas = micro.querySelectorAll<HTMLElement>('.letra');
+      todas.forEach((el) => {
+        let e = estados.get(el);
+        if (!e) { e = { x: 0, y: 0, vx: 0, vy: 0, r: 0 }; estados.set(el, e); }
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2 - e.x - caja.left, cy = r.top + r.height / 2 - e.y - caja.top;
+        let fx = -e.x * 0.035, fy = -e.y * 0.035;
+        if (cursor.activo || cursor.rafaga > 0) {
+          const dx = cx + e.x - cursor.x, dy = cy + e.y - cursor.y, d = Math.hypot(dx, dy) || 1;
+          const alcance = cursor.rafaga > 0 ? radio * 1.8 : radio;
+          if (d < alcance) { const f = (1 - d / alcance) * (cursor.rafaga > 0 ? 9 : 4.5); fx += (dx / d) * f; fy += (dy / d) * f; }
+        }
+        e.vx = (e.vx + fx) * 0.86; e.vy = (e.vy + fy) * 0.86;
+        e.x += e.vx; e.y += e.vy; e.r = e.x * 0.25 + e.vy * 1.5;
+        energia += Math.abs(e.vx) + Math.abs(e.vy);
+        maxDesp = Math.max(maxDesp, Math.abs(e.x), Math.abs(e.y));
+        el.style.transform = Math.abs(e.x) + Math.abs(e.y) < 0.05 ? '' : `translate(${e.x.toFixed(1)}px, ${e.y.toFixed(1)}px) rotate(${e.r.toFixed(1)}deg)`;
+      });
+      if (cursor.rafaga > 0) cursor.rafaga--;
+      if (maxDesp < 0.3 && energia < 0.2 && !cursor.activo) {
+        // En reposo, cada letra vuelve exactamente a su posición original.
+        todas.forEach((el) => { el.style.transform = ''; const e = estados.get(el); if (e) { e.x = e.y = e.vx = e.vy = 0; } });
+        animando = false; return;
+      }
+      requestAnimationFrame(paso);
+    };
+    const despertar = () => { if (!animando && !reducir) { animando = true; requestAnimationFrame(paso); } };
+    const posicion = (e: PointerEvent) => { const c = micro.getBoundingClientRect(); cursor.x = e.clientX - c.left; cursor.y = e.clientY - c.top; };
+    micro.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { posicion(e); cursor.activo = true; despertar(); } });
+    micro.addEventListener('pointerleave', () => { cursor.activo = false; });
+    // En pantallas táctiles, un toque esparce las letras alrededor del dedo.
+    micro.addEventListener('pointerdown', (e) => { posicion(e); cursor.rafaga = 6; despertar(); });
+
+    if (!reducir) alVer(micro, ciclo);
   }
 
   /* ---------- 03 · Conversación ---------- */
@@ -269,11 +271,11 @@ const tramos = [
     const mensajes = conv.querySelector<HTMLElement>('[data-conv-mensajes]')!;
     const estado = conv.querySelector<HTMLElement>('[data-conv-estado]')!;
     const dialogo = [
-      { de: 'persona', texto: 'Intenté pagar y me salió «Transacción rechazada». ¿Me cobraron?' },
-      { de: 'interfaz', texto: 'No te cobramos nada. Tu banco bloqueó el pago como medida de seguridad.' },
-      { de: 'interfaz', texto: 'Puedes aprobarlo desde la app de tu banco o pagar con otra tarjeta. Tu carrito sigue guardado.' },
-      { de: 'persona', texto: 'Listo, ya lo aprobé en la app' },
-      { de: 'interfaz', texto: 'Perfecto. Tu pedido está confirmado y llega el jueves.' },
+      { de: 'persona', texto: 'Me salió «Pago rechazado». ¿Me cobraron?' },
+      { de: 'interfaz', texto: 'No. Tu banco frenó el pago por seguridad.' },
+      { de: 'interfaz', texto: 'Apruébalo en la app de tu banco y vuelve a intentarlo.' },
+      { de: 'persona', texto: 'Listo, ya lo aprobé' },
+      { de: 'interfaz', texto: 'Pedido confirmado. Llega el jueves.' },
     ];
     const burbuja = (de: string) => {
       const b = document.createElement('p'); b.className = `burbuja burbuja--${de}`;
@@ -317,46 +319,6 @@ const tramos = [
     alVer(conv, iniciar);
   }
 
-  /* ---------- 05 · Del problema al impacto ---------- */
-  {
-    const imp = document.querySelector<HTMLElement>('[data-imp]')!;
-    const titulo = imp.querySelector<HTMLElement>('[data-imp-titulo]')!;
-    const ayuda = imp.querySelector<HTMLElement>('[data-imp-ayuda]')!;
-    const botones = [...imp.querySelectorAll<HTMLButtonElement>('[data-ir]')];
-    const antes = { t: 'Sincronización inteligente', a: 'Optimiza la gestión de contenidos multimedia.' };
-    const despues = { t: 'Guardar fotos con wifi', a: 'Se guardan solas al conectarte a wifi. No usan tus datos móviles.' };
-    const duracion = [3200, 5200, 3200, 4600];
-    let turno = 0;
-
-    const pintar = (n: number) => {
-      for (let k = 0; k < 4; k++) imp.classList.toggle(`imp--e${k}`, n >= k);
-      imp.dataset.estado = String(n);
-      botones.forEach((b, k) => {
-        b.classList.toggle('activo', k === n); b.classList.toggle('hecho', k < n);
-        b.style.setProperty('--dur', `${duracion[k]}ms`);
-      });
-    };
-    const ir = async (n: number, animar: boolean) => {
-      const id = ++turno; const vivo = () => id === turno;
-      pintar(n);
-      if (n === 0) { titulo.textContent = antes.t; ayuda.textContent = antes.a; }
-      else if (n === 1 && animar) {
-        titulo.textContent = antes.t; ayuda.textContent = antes.a;
-        await espera(500);
-        if (!(await borrar(titulo, 25, vivo))) return;
-        if (!(await teclear(titulo, despues.t, 60, vivo))) return;
-        if (!(await borrar(ayuda, 12, vivo))) return;
-        if (!(await teclear(ayuda, despues.a, 30, vivo))) return;
-      } else { titulo.textContent = despues.t; ayuda.textContent = despues.a; }
-      if (reducir) return;
-      const restante = n === 1 && animar ? 1400 : duracion[n];
-      await espera(restante);
-      if (vivo()) ir((n + 1) % 4, true);
-    };
-    botones.forEach((b) => b.addEventListener('click', () => ir(Number(b.dataset.ir), true)));
-    if (reducir) { pintar(3); titulo.textContent = despues.t; ayuda.textContent = despues.a; }
-    else { pintar(0); alVer(imp, () => ir(0, true)); }
-  }
 </script>
 
 <style>
@@ -444,6 +406,9 @@ const tramos = [
   .micro { display: flex; align-items: center; justify-content: center; text-align: center; min-height: clamp(30rem, 70vh, 42rem); }
   .micro__titular { position: relative; z-index: 1; max-width: 16ch; }
   .micro__tecleo { white-space: nowrap; }
+  .micro { cursor: default; touch-action: pan-y; user-select: none; }
+  .palabra { display: inline-block; white-space: nowrap; }
+  .letra { display: inline-block; will-change: transform; }
 
   /* ---------- 03 ---------- */
   .conv { display: grid; gap: 2rem; align-items: center; }
@@ -465,68 +430,4 @@ const tramos = [
   @media (min-width: 60rem) { .conv { grid-template-columns: 1.3fr 1fr; } }
   @media (max-width: 59.99rem) { .conv { padding-bottom: 3.5rem; } }
 
-  /* ---------- 05 ---------- */
-  .imp { display: grid; gap: 2.5rem; align-items: center; }
-  .imp__titular { max-width: 13ch; }
-  .imp__pasos { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; gap: 0.25rem; max-width: 26rem; }
-  .imp__pasos button {
-    position: relative; width: 100%; display: flex; align-items: baseline; gap: 0.75rem; overflow: hidden;
-    padding: 0.7rem 0.25rem; border: 0; border-bottom: 1px solid var(--borde); background: none;
-    font: inherit; font-size: 0.9375rem; color: var(--texto-suave); text-align: left; cursor: pointer; transition: color 0.4s;
-  }
-  .imp__etq { flex: 0 0 5.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-  .imp__pasos i { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: var(--acento); transform: scaleX(0); transform-origin: left; }
-  .imp__pasos .activo { color: var(--texto); }
-  .imp__pasos .activo .imp__etq { color: var(--acento-texto); }
-  .imp__pasos .activo i { animation: llenar var(--dur) linear forwards; }
-  .imp__pasos .hecho { color: var(--texto); }
-  .imp__pasos .hecho i { transform: scaleX(1); background: var(--texto); opacity: 0.25; }
-  @keyframes llenar { to { transform: scaleX(1); } }
-
-  .imp__escena { display: grid; place-items: center; }
-  .imp__movil {
-    position: relative; width: min(100%, 22rem); min-height: 27rem; padding: 1.25rem;
-    border-radius: 32px; background: var(--tarjeta); border: 1px solid var(--borde);
-    box-shadow: 0 40px 80px -40px rgb(0 0 0 / 0.4);
-  }
-  .imp__appbar { font-size: 0.9375rem; font-weight: 600; margin: 0.25rem 0 1.25rem !important; }
-  .imp__appbar span { color: var(--texto-suave); margin-right: 0.35rem; }
-  .imp__fila { display: flex; align-items: center; gap: 0.85rem; padding: 1rem; border-radius: 16px; background: var(--superficie); transition: background-color 0.5s, box-shadow 0.5s; }
-  .imp__icono { flex: 0 0 auto; display: grid; place-items: center; width: 0; height: 2.4rem; overflow: hidden; border-radius: 12px; background: var(--acento-suave); color: var(--acento-texto); opacity: 0; transition: width 0.5s var(--ease), opacity 0.4s; }
-  .imp__textos { flex: 1; display: grid; gap: 0.2rem; min-height: 4.2rem; align-content: center; }
-  .imp__textos b { font-size: 0.9375rem; font-weight: 600; }
-  .imp__textos small { font-size: 0.8125rem; line-height: 1.35; color: var(--texto-suave); }
-  .imp__switch { flex: 0 0 auto; width: 2.6rem; height: 1.5rem; border-radius: 999px; background: var(--borde); position: relative; transition: background-color 0.4s; }
-  .imp__switch span { position: absolute; top: 3px; left: 3px; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.25); transition: transform 0.4s var(--ease); }
-
-  .imp__zona { display: grid; margin-top: 1rem; }
-  .imp__zona > * { grid-area: 1 / 1; align-self: start; }
-  .imp__kpis { position: absolute; left: 1.25rem; right: 1.25rem; }
-  .imp__duda, .imp__principios, .imp__toast, .imp__kpis { opacity: 0; transform: translateY(10px); transition: opacity 0.45s, transform 0.5s var(--ease); pointer-events: none; }
-  .imp__duda { font-family: var(--serif); font-style: italic; font-size: 1.375rem; line-height: 1.2; color: var(--texto-suave); }
-  .imp__principios { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; margin: 0; padding: 0; }
-  .imp__principios li { font-size: 0.75rem; font-weight: 500; padding: 0.3rem 0.65rem; border-radius: 999px; border: 1px dashed var(--acento); color: var(--acento-texto); }
-  .imp__toast { padding: 0.8rem 1rem; border-radius: 14px; background: var(--texto); color: var(--fondo); font-size: 0.875rem; }
-  .imp__kpis { bottom: 1.25rem; display: grid; gap: 0.75rem; padding: 1rem; border-radius: 16px; background: var(--superficie); }
-  .imp__kpis div { display: grid; grid-template-columns: 1fr auto; gap: 0.35rem 0.5rem; align-items: center; font-size: 0.8125rem; }
-  .imp__kpis b { font-size: 1.125rem; line-height: 1; }
-  .imp__kpis .sube { color: #18794e; } .imp__kpis .baja { color: var(--acento-texto); }
-  .imp__kpis i { grid-column: 1 / -1; height: 6px; border-radius: 6px; background: var(--borde); overflow: hidden; }
-  .imp__kpis s { display: block; height: 100%; width: calc(var(--v) * 100%); border-radius: inherit; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease) 0.2s; }
-  .imp__kpis div:nth-child(1) s { color: #30a46c; } .imp__kpis div:nth-child(2) s { color: var(--acento); }
-  .imp__kpis small { font-size: 0.6875rem; color: var(--texto-suave); }
-
-  /* Estados: 0 fricción · 1 contenido · 2 interfaz · 3 impacto */
-  .imp[data-estado='0'] .imp__duda { opacity: 1; transform: none; }
-  .imp[data-estado='0'] .imp__textos > * { text-decoration: underline wavy color-mix(in srgb, var(--acento) 80%, transparent); text-underline-offset: 0.25em; text-decoration-thickness: 1px; }
-  .imp[data-estado='1'] .imp__principios { opacity: 1; transform: none; }
-  .imp[data-estado='1'] .imp__fila { box-shadow: 0 0 0 2px color-mix(in srgb, var(--acento) 35%, transparent); }
-  .imp--e2 .imp__icono { width: 2.4rem; opacity: 1; }
-  .imp--e2 .imp__fila { background: var(--tarjeta); box-shadow: 0 0 0 1px var(--borde), 0 14px 30px -18px rgb(0 0 0 / 0.3); }
-  .imp--e2 .imp__switch { background: #30a46c; }
-  .imp--e2 .imp__switch span { transform: translateX(1.1rem); }
-  .imp--e2 .imp__toast { opacity: 1; transform: none; }
-  .imp--e3 .imp__kpis { opacity: 1; transform: none; }
-  .imp--e3 .imp__kpis s { transform: scaleX(1); }
-  @media (min-width: 60rem) { .imp { grid-template-columns: 1.15fr 1fr; } }
 </style>

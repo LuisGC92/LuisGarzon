@@ -90,8 +90,8 @@ const { base, opciones } = Astro.props;
 
       const fs = parseFloat(getComputedStyle(h1).fontSize);
       // Retícula más fina y puntos casi juntos: la letra se lee entera sin perder la textura de píxel.
-      const paso = Math.max(2, Math.round(fs / 40));
-      tam = Math.max(1.6, paso * 0.86);
+      const paso = Math.max(2, Math.round(fs / 44));
+      tam = Math.max(1.7, paso * 0.92);
 
       const off = document.createElement('canvas'); off.width = ancho; off.height = alto;
       const o = off.getContext('2d', { willReadFrequently: true })!;
@@ -199,7 +199,7 @@ const { base, opciones } = Astro.props;
           const naranja = (grupo[i] >= 0) !== (calor[i] > 0.35);
           if ((pase === 1) !== naranja) continue;
           ctx.globalAlpha = alfa[i];
-          // Cada punto se centra en su muestra para coincidir con el trazo tenue del texto real.
+          // Cada punto se centra en su muestra para respetar la silueta exacta de la letra.
           ctx.fillRect(px[i] - tam / 2, py[i] - tam / 2, tam, tam);
         }
       }
@@ -294,8 +294,7 @@ const { base, opciones } = Astro.props;
   .ht__acento { display: block; min-height: 1.04em; white-space: nowrap; font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--acento); }
   .ht__lienzo { position: absolute; left: 0; top: 0; pointer-events: none; }
 
-  /* Con el lienzo activo, el texto real queda como un trazo tenue detrás de los puntos:
-     rellena la forma de cada letra y mejora la lectura sin perder el efecto de píxel. */
-  .ht--activo .ht__titular { color: color-mix(in srgb, var(--texto) 11%, transparent); }
-  .ht--activo .ht__acento { color: color-mix(in srgb, var(--acento) 16%, transparent); }
+  /* Con el lienzo activo, el texto real se vuelve transparente: sigue disponible para lectores
+     de pantalla y buscadores, pero no deja rastro visible cuando el cursor aparta los puntos. */
+  .ht--activo .ht__titular, .ht--activo .ht__acento { color: transparent; }
 </style>

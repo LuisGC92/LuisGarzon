@@ -97,20 +97,25 @@ const { base, opciones } = Astro.props;
       const o = off.getContext('2d', { willReadFrequently: true })!;
       o.textBaseline = 'alphabetic'; o.fillStyle = '#000';
       const lineas: number[] = [];
-      const pintarTexto = (el: Element, texto: string, x: number, rr: DOMRect) => {
+      const pintarTexto = (el: Element, texto: string, x: number, rr: DOMRect, grosor = 0) => {
         const f = fuenteDe(el);
         o.font = f.fuente;
         if ('letterSpacing' in o) (o as any).letterSpacing = f.esp;
         const m = o.measureText('Hg');
         const y = rr.top - r.top + (rr.height - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent;
         o.fillText(texto, x, y);
+        if (grosor > 0) {
+          // Contorno extra solo para el muestreo: los trazos finos reciben más puntos y la letra no se pierde.
+          o.lineWidth = grosor; o.lineJoin = 'round'; o.strokeStyle = '#000';
+          o.strokeText(texto, x, y);
+        }
         lineas.push(Math.round(y + m.fontBoundingBoxDescent * 0.35));
         return { y, asc: m.fontBoundingBoxAscent };
       };
-      const recoger = (g: number, origenX: number, destino: number[][]) => {
+      const recoger = (g: number, origenX: number, destino: number[][], umbral = 140) => {
         const d = o.getImageData(0, 0, ancho, alto).data;
         for (let y = 0; y < alto; y += paso) for (let x = 0; x < ancho; x += paso) {
-          if (d[(y * ancho + x) * 4 + 3] > 140) destino.push([x, y, g, x - origenX]);
+          if (d[(y * ancho + x) * 4 + 3] > umbral) destino.push([x, y, g, x - origenX]);
         }
         o.clearRect(0, 0, ancho, alto);
       };
@@ -120,7 +125,14 @@ const { base, opciones } = Astro.props;
       h1.querySelectorAll('.ht__palabra').forEach((p) => { const rr = p.getBoundingClientRect(); pintarTexto(p, p.textContent || '', rr.left - r.left, rr); });
       recoger(-1, 0, todos);
       // Acento: cada opción se muestrea en la misma línea.
-      opciones.forEach((t, g) => { const m = pintarTexto(acentoEl, t, acX, rA); acBase = m.y; acAsc = m.asc; recoger(g, acX, todos); });
+      // En pantallas pequeñas, la itálica serif del acento tiene trazos más finos que la retícula:
+      // se engrosa para el muestreo y se baja el umbral, así cada letra conserva su forma en puntos.
+      const grosorAcento = fs < 72 ? Math.max(0.8, fs * 0.022) : 0;
+      opciones.forEach((t, g) => {
+        const m = pintarTexto(acentoEl, t, acX, rA, grosorAcento);
+        acBase = m.y; acAsc = m.asc;
+        recoger(g, acX, todos, grosorAcento ? 120 : 140);
+      });
       renglones = [...new Set(lineas)].sort((a, b) => a - b).filter((v, i, a) => i === 0 || v - a[i - 1] > 4);
 
       n = todos.length;
